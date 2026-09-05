@@ -48,10 +48,12 @@ git clone https://github.com/tonyexpo/the-less-ai-like-writing-skill.git .claude
 
 Claude will pick it up automatically based on the `description` in the frontmatter.
 
-### ChatGPT or other tools that accept file attachments
+### Claude/ChatGPT or others
 
-1. Download [`SKILL.md`](https://github.com/tonyexpo/the-less-ai-like-writing-skill/raw/refs/heads/main/SKILL.md).
-2. Upload the file to ChatGPT, Claude, or another AI tool that accepts instruction files or project attachments.
+[![Download SKILL.md](https://img.shields.io/badge/Download-SKILL.md-2ea44f?style=for-the-badge&logo=github)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/raw/refs/heads/main/SKILL.md)
+
+1. Download the file above (or [`SKILL.md`](https://github.com/tonyexpo/the-less-ai-like-writing-skill/raw/refs/heads/main/SKILL.md) directly).
+2. Upload it to ChatGPT, Claude, or another AI tool that accepts instruction files or project attachments.
 3. Ask the tool to apply the skill when drafting or revising text.
 
 Example requests:
