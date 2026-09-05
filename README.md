@@ -8,8 +8,6 @@ A reusable writing and editing skill that reduces common generic LLM prose patte
 
 It is designed for text that feels too polished, vague, repetitive, promotional, or structurally predictable. The goal is better writing—not manufactured imperfections or tricks intended to defeat AI detectors.
 
-[![Download the skill](https://img.shields.io/badge/Download-the_ready--to--use_ZIP-2ea44f?style=for-the-badge&logo=github)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/raw/refs/heads/main/the-less-ai-like-writing-skill.zip)
-
 ## What it improves
 
 The skill looks for patterns such as:
@@ -38,10 +36,22 @@ The revision does not try to sound human by adding mistakes. It replaces a gener
 
 ## Download and use
 
-No Git clone is required.
+This repository *is* the skill: `SKILL.md` sits at the repository root, in the standard Claude Skill format (YAML frontmatter with `name` and `description`, followed by the instructions).
 
-1. [Download `the-less-ai-like-writing-skill.zip`](https://github.com/tonyexpo/the-less-ai-like-writing-skill/raw/refs/heads/main/the-less-ai-like-writing-skill.zip).
-2. Upload the ZIP to ChatGPT, Claude, or another AI tool that accepts instruction files or project attachments.
+### Claude Code / Claude apps that support Skills
+
+Clone (or add as a git submodule) directly into your skills folder, keeping the repository name as the skill's folder name:
+
+```sh
+git clone https://github.com/tonyexpo/the-less-ai-like-writing-skill.git .claude/skills/the-less-ai-like-writing-skill
+```
+
+Claude will pick it up automatically based on the `description` in the frontmatter.
+
+### ChatGPT or other tools that accept file attachments
+
+1. Download [`SKILL.md`](https://github.com/tonyexpo/the-less-ai-like-writing-skill/raw/refs/heads/main/SKILL.md).
+2. Upload the file to ChatGPT, Claude, or another AI tool that accepts instruction files or project attachments.
 3. Ask the tool to apply the skill when drafting or revising text.
 
 Example requests:
@@ -51,8 +61,6 @@ Example requests:
 > Edit this article using the attached skill. Preserve the technical terminology and remove rhetorical padding.
 
 > Draft a concise announcement using the attached skill. Do not add claims or details that I have not provided.
-
-The ZIP already contains the skill folder and its `SKILL.md` file, so it can be downloaded and uploaded as a single package.
 
 ## What the skill does not do
 
