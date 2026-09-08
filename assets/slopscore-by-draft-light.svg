@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="642" viewBox="0 0 780 642" role="img" aria-label="How much slop each revision arm removes">
+<style>text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}.t{font-size:15px;font-weight:600}.s{font-size:11.5px}.l{font-size:12px}.n{font-size:10px}.a{font-size:10.5px}</style>
+<rect width="780" height="642" fill="#ffffff"/>
+<text class="t" x="24" y="30" fill="#1f2328">How much slop each revision arm removes</text>
+<text class="s" x="24" y="49" fill="#59636e">sonnet via the Claude Code CLI - 3 revisions per draft per arm - 2026-09-08</text>
+<rect x="24" y="66" width="10" height="10" rx="2" fill="#8c959f"/>
+<text class="a" x="38" y="75" fill="#59636e">original draft</text>
+<rect x="144" y="66" width="10" height="10" rx="2" fill="#d1495b"/>
+<text class="a" x="158" y="75" fill="#59636e">revised, no guidance</text>
+<rect x="300" y="66" width="10" height="10" rx="2" fill="#c9852a"/>
+<text class="a" x="314" y="75" fill="#59636e">revised, generic advice</text>
+<rect x="474" y="66" width="10" height="10" rx="2" fill="#2f7d4f"/>
+<text class="a" x="488" y="75" fill="#59636e">revised with the skill</text>
+<line x1="196.0" y1="86" x2="196.0" y2="586" stroke="#d8dee4" stroke-width="1"/>
+<text class="a" x="196.0" y="600" text-anchor="middle" fill="#59636e">0</text>
+<line x1="283.0" y1="86" x2="283.0" y2="586" stroke="#d8dee4" stroke-width="1"/>
+<text class="a" x="283.0" y="600" text-anchor="middle" fill="#59636e">4</text>
+<line x1="370.0" y1="86" x2="370.0" y2="586" stroke="#d8dee4" stroke-width="1"/>
+<text class="a" x="370.0" y="600" text-anchor="middle" fill="#59636e">8</text>
+<line x1="457.0" y1="86" x2="457.0" y2="586" stroke="#d8dee4" stroke-width="1"/>
+<text class="a" x="457.0" y="600" text-anchor="middle" fill="#59636e">12</text>
+<line x1="544.0" y1="86" x2="544.0" y2="586" stroke="#d8dee4" stroke-width="1"/>
+<text class="a" x="544.0" y="600" text-anchor="middle" fill="#59636e">16</text>
+<line x1="631.0" y1="86" x2="631.0" y2="586" stroke="#d8dee4" stroke-width="1"/>
+<text class="a" x="631.0" y="600" text-anchor="middle" fill="#59636e">20</text>
+<line x1="718.0" y1="86" x2="718.0" y2="586" stroke="#d8dee4" stroke-width="1"/>
+<text class="a" x="718.0" y="600" text-anchor="middle" fill="#59636e">24</text>
+<text class="a" x="457.0" y="618" text-anchor="middle" fill="#59636e">slopscore (0-24, sum of twelve audit categories)</text>
+<text class="a" x="24" y="630" fill="#59636e">Lower is better. The gap that matters is generic advice vs the skill.</text>
+<text class="l" x="184" y="102.0" text-anchor="end" fill="#1f2328">bio-obama</text>
+<rect x="196" y="92.0" width="304.5" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="505.5" y="100.0" fill="#59636e">14</text>
+<rect x="196" y="103.5" width="253.8" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="454.8" y="111.5" fill="#59636e">11.67</text>
+<rect x="196" y="115.0" width="253.8" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="454.8" y="123.0" fill="#59636e">11.67</text>
+<rect x="196" y="126.5" width="115.9" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="316.9" y="134.5" fill="#59636e">5.33</text>
+<text class="l" x="184" y="163.0" text-anchor="end" fill="#1f2328">blog-ai-education</text>
+<rect x="196" y="153.0" width="282.8" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="483.8" y="161.0" fill="#59636e">13</text>
+<rect x="196" y="164.5" width="246.4" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="447.4" y="172.5" fill="#59636e">11.33</text>
+<rect x="196" y="176.0" width="253.8" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="454.8" y="184.0" fill="#59636e">11.67</text>
+<rect x="196" y="187.5" width="224.7" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="425.7" y="195.5" fill="#59636e">10.33</text>
+<text class="l" x="184" y="224.0" text-anchor="end" fill="#1f2328">oped-remote-work</text>
+<rect x="196" y="214.0" width="282.8" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="483.8" y="222.0" fill="#59636e">13</text>
+<rect x="196" y="225.5" width="232.1" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="433.1" y="233.5" fill="#59636e">10.67</text>
+<rect x="196" y="237.0" width="195.8" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="396.8" y="245.0" fill="#59636e">9</text>
+<rect x="196" y="248.5" width="174.0" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="375.0" y="256.5" fill="#59636e">8</text>
+<text class="l" x="184" y="285.0" text-anchor="end" fill="#1f2328">explainer-attention</text>
+<rect x="196" y="275.0" width="239.2" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="440.2" y="283.0" fill="#59636e">11</text>
+<rect x="196" y="286.5" width="188.6" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="389.6" y="294.5" fill="#59636e">8.67</text>
+<rect x="196" y="298.0" width="174.0" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="375.0" y="306.0" fill="#59636e">8</text>
+<rect x="196" y="309.5" width="115.9" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="316.9" y="317.5" fill="#59636e">5.33</text>
+<text class="l" x="184" y="346.0" text-anchor="end" fill="#1f2328">history-rome</text>
+<rect x="196" y="336.0" width="239.2" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="440.2" y="344.0" fill="#59636e">11</text>
+<rect x="196" y="347.5" width="239.2" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="440.2" y="355.5" fill="#59636e">11</text>
+<rect x="196" y="359.0" width="202.9" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="403.9" y="367.0" fill="#59636e">9.33</text>
+<rect x="196" y="370.5" width="159.4" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="360.4" y="378.5" fill="#59636e">7.33</text>
+<text class="l" x="184" y="407.0" text-anchor="end" fill="#1f2328">travel-lisbon</text>
+<rect x="196" y="397.0" width="239.2" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="440.2" y="405.0" fill="#59636e">11</text>
+<rect x="196" y="408.5" width="224.7" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="425.7" y="416.5" fill="#59636e">10.33</text>
+<rect x="196" y="420.0" width="239.2" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="440.2" y="428.0" fill="#59636e">11</text>
+<rect x="196" y="431.5" width="152.2" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="353.2" y="439.5" fill="#59636e">7</text>
+<text class="l" x="184" y="468.0" text-anchor="end" fill="#1f2328">launch-announcement</text>
+<rect x="196" y="458.0" width="217.5" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="418.5" y="466.0" fill="#59636e">10</text>
+<rect x="196" y="469.5" width="202.9" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="403.9" y="477.5" fill="#59636e">9.33</text>
+<rect x="196" y="481.0" width="181.2" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="382.2" y="489.0" fill="#59636e">8.33</text>
+<rect x="196" y="492.5" width="166.8" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="367.8" y="500.5" fill="#59636e">7.67</text>
+<text class="l" x="184" y="529.0" text-anchor="end" fill="#1f2328">memo-migration</text>
+<rect x="196" y="519.0" width="217.5" height="9" rx="2" fill="#8c959f"/>
+<text class="n" x="418.5" y="527.0" fill="#59636e">10</text>
+<rect x="196" y="530.5" width="152.2" height="9" rx="2" fill="#d1495b"/>
+<text class="n" x="353.2" y="538.5" fill="#59636e">7</text>
+<rect x="196" y="542.0" width="188.6" height="9" rx="2" fill="#c9852a"/>
+<text class="n" x="389.6" y="550.0" fill="#59636e">8.67</text>
+<rect x="196" y="553.5" width="65.2" height="9" rx="2" fill="#2f7d4f"/>
+<text class="n" x="266.2" y="561.5" fill="#59636e">3</text>
+</svg>
