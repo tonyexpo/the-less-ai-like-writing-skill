@@ -1,5 +1,7 @@
 # Less AI-Like Writing Skill
 
+[![CI](https://github.com/tonyexpo/the-less-ai-like-writing-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/actions/workflows/ci.yml)
+[![Eval](https://github.com/tonyexpo/the-less-ai-like-writing-skill/actions/workflows/eval.yml/badge.svg)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/actions/workflows/eval.yml)
 [![License: Apache-2.0](https://img.shields.io/github/license/tonyexpo/the-less-ai-like-writing-skill?color=blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/tonyexpo/the-less-ai-like-writing-skill)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/commits/main)
 [![GitHub stars](https://img.shields.io/github/stars/tonyexpo/the-less-ai-like-writing-skill?style=flat)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/stargazers)
@@ -63,6 +65,99 @@ Example requests:
 > Edit this article using the attached skill. Preserve the technical terminology and remove rhetorical padding.
 
 > Draft a concise announcement using the attached skill. Do not add claims or details that I have not provided.
+
+## Does it work?
+
+Measured, not asserted. Eight AI-slop drafts are revised three times each under
+three conditions that differ only in the system prompt, and the revisions are
+scored by [`tools/slopscore.py`](tools/slopscore.py) against the twelve-category
+audit in `SKILL.md` (0-24, lower is better).
+
+The middle arm is the one that makes this worth reading. Comparing the skill
+against an empty prompt would only show that 12 KB of instructions beats none,
+so a third arm gets a short paragraph of ordinary copy-editing advice instead.
+
+| condition | slopscore | hits per 100 words |
+| --- | ---: | ---: |
+| the original drafts | 11.62 | 6.60 |
+| revised, no guidance | 10.00 | 6.19 |
+| revised, generic writing advice | 9.71 | 6.38 |
+| **revised with this skill** | **6.75** | **5.31** |
+
+Generic advice removes almost nothing (11.62 to 9.71). The skill removes about
+three times as much, and the gap between the two is the part attributable to
+the skill rather than to prompting in general.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/slopscore-by-draft-dark.svg">
+  <img alt="Slopscore per draft for each revision arm" src="assets/slopscore-by-draft-light.svg">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/slopscore-by-category-dark.svg">
+  <img alt="Mean score per audit category for each revision arm" src="assets/slopscore-by-category-light.svg">
+</picture>
+
+### Read the numbers with these caveats
+
+- **Part of the gain is length.** The skill's revisions are shorter (255 words
+  against 340 unguided), and shorter text trips fewer patterns outright. Cutting
+  padding is one of the skill's stated goals, so this is not cheating, but it
+  does mean the honest margin over generic advice is 2.96 points of score and
+  1.07 hits per 100 words - the smaller number is the length-adjusted one.
+- **Structure survives every arm.** "Excessive headings or bullets" barely moves
+  (2.00 to 1.92): asked to revise, the model rewrites sentences and leaves the
+  scaffolding alone. If a draft is over-structured, the skill will not fix that
+  by itself.
+- **One detector is inert.** "Forced synonym variation" scored 0 everywhere. It
+  only knows a fixed list of synonym clusters, so treat that row as unmeasured
+  rather than as a clean result.
+- **The harness is not a clean model.** Everything runs through the Claude Code
+  CLI, which adds a system prompt of its own to all three arms. They are
+  compared under identical conditions, but none of them is a raw model.
+- **Small n**, one model, English only. Eight drafts, three samples per arm.
+
+Full method, the confounds behind these choices, and how to reproduce:
+[`evals/README.md`](evals/README.md).
+
+## The scorer
+
+`tools/slopscore.py` turns the audit in `SKILL.md` into something a test can
+assert on. No dependencies.
+
+```sh
+python -m tools.slopscore draft.md            # a report with line-level evidence
+python -m tools.slopscore --json draft.md     # machine-readable
+cat draft.md | python -m tools.slopscore -    # from a pipe
+python -m tools.slopscore --max-score 5 *.md  # exit 1 above the threshold
+```
+
+It scores each of the twelve categories 0 (absent), 1 (occasional) or 2
+(frequent), using the bands the skill already defines: 0-5 low, 6-11 revise,
+12+ substantial rewrite.
+
+It is a writing heuristic, not an AI detector, and it does not read minds: it
+counts surface patterns. A text can score 0 and still be boring, wrong, or
+plagiarised. What it will not do is reward the tactics `SKILL.md` forbids -
+there are tests asserting that em dashes, contractions, correct spelling and
+honest repetition all cost nothing.
+
+## Development
+
+```sh
+pip install -r requirements-dev.txt
+python -m pytest            # scorer, CLI, corpus and SKILL.md contract tests
+ruff check . && ruff format --check .
+```
+
+CI runs the suite on Python 3.10 to 3.13 on every push. The live model eval is a
+separate workflow: it needs an `ANTHROPIC_API_KEY` secret, runs weekly, and
+fails if the skill stops beating the generic-advice arm.
+
+One test is worth knowing about: `tests/test_skill_contract.py` asserts that the
+twelve categories in the `SKILL.md` audit match the scorer's, in the same order.
+Add a category to the skill without teaching the scorer about it and the build
+goes red instead of quietly under-reporting.
 
 ## What the skill does not do
 

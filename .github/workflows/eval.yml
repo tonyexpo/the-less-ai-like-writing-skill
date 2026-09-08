@@ -1,0 +1,105 @@
+name: Eval
+
+# Live A/B against a real model. Costs tokens and is non-deterministic, so it
+# does not run on every push. Trigger it by hand, or let the weekly run catch
+# drift when the underlying model changes.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Model to evaluate
+        default: sonnet
+        type: string
+      repeats:
+        description: Samples per prompt per arm
+        default: "3"
+        type: string
+      commit_results:
+        description: Commit refreshed results and charts
+        default: false
+        type: boolean
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  eval:
+    name: A/B against ${{ inputs.model || 'sonnet' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Check for an API key
+        id: key
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::warning::ANTHROPIC_API_KEY is not set; skipping the live eval."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the eval
+        if: steps.key.outputs.present == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python evals/run_eval.py \
+            --model "${{ inputs.model || 'sonnet' }}" \
+            --repeats "${{ inputs.repeats || '3' }}" \
+            --workers 4 \
+            --save-raw \
+            --gate-delta 1.5
+
+      - name: Render charts
+        if: steps.key.outputs.present == 'true'
+        run: python -m tools.render_chart evals/results/latest.json
+
+      - name: Summary
+        if: steps.key.outputs.present == 'true'
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d = json.load(open("evals/results/latest.json"))
+          s, m = d["summary"], d["meta"]
+          print(f"## Eval: {m['model']}, {m['repeats']} samples per arm\n")
+          print("| slice | no skill | with skill | delta |")
+          print("| --- | ---: | ---: | ---: |")
+          for k in ("overall", "slop_prone", "controls"):
+              b = s[k]
+              print(f"| {k} | {b['baseline']} | {b['skill']} | {b['delta']:+} |")
+          print(f"\n{s['runs_ok']} generations scored, {s['runs_failed']} failed.")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: steps.key.outputs.present == 'true'
+        with:
+          name: eval-results
+          path: |
+            evals/results/
+            assets/
+
+      - name: Commit refreshed results
+        if: steps.key.outputs.present == 'true' && inputs.commit_results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evals/results assets
+          git diff --staged --quiet || git commit -m "eval: refresh results and charts"
+          git push

@@ -1,0 +1,71 @@
+{
+  "notes": [
+    "Genre matters more than topic. On a plain factual biography a modern model",
+    "already writes near-clean prose, so the skill has little to remove. The slop",
+    "shows up in genres where the default register is promotional or essayistic.",
+    "bio-obama and memo-migration are kept as negative controls: a benchmark that",
+    "only shows movement where movement is easy is not measuring anything."
+  ],
+  "prompts": [
+    {
+      "id": "bio-obama",
+      "genre": "factual-bio",
+      "control": true,
+      "prompt": "Who was Barack Obama? Write about 350 words."
+    },
+    {
+      "id": "memo-migration",
+      "genre": "internal-memo",
+      "control": true,
+      "prompt": "Write a 300-word internal memo telling an engineering team that the Postgres 12 to 16 migration happens on the 14th, that there is a 20 minute write freeze, and that the read replicas stay up."
+    },
+    {
+      "id": "blog-ai-education",
+      "genre": "thought-leadership",
+      "control": false,
+      "prompt": "Write a 400-word blog post about why artificial intelligence matters for education."
+    },
+    {
+      "id": "launch-announcement",
+      "genre": "marketing",
+      "control": false,
+      "prompt": "Write a 350-word launch announcement for a new project management tool called Kestrel."
+    },
+    {
+      "id": "travel-lisbon",
+      "genre": "travel",
+      "control": false,
+      "prompt": "Write a 400-word travel piece about spending a weekend in Lisbon."
+    },
+    {
+      "id": "linkedin-lessons",
+      "genre": "social-post",
+      "control": false,
+      "prompt": "Write a 250-word LinkedIn post about lessons learned from a failed product launch."
+    },
+    {
+      "id": "oped-remote-work",
+      "genre": "opinion",
+      "control": false,
+      "prompt": "Write a 400-word opinion piece arguing that remote work is better for most software teams."
+    },
+    {
+      "id": "explainer-attention",
+      "genre": "technical-explainer",
+      "control": false,
+      "prompt": "Explain in about 400 words how attention works in a transformer, for a reader who knows linear algebra but not machine learning."
+    },
+    {
+      "id": "review-laptop",
+      "genre": "review",
+      "control": false,
+      "prompt": "Write a 350-word review of a mid-range laptop you have been using for six months for software development."
+    },
+    {
+      "id": "history-rome",
+      "genre": "history",
+      "control": false,
+      "prompt": "Write about 400 words on why the Western Roman Empire fell."
+    }
+  ]
+}
