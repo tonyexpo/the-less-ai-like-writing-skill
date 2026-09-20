@@ -1,9 +1,5 @@
-# Barack Obama's Legacy
+Barack Obama was born in Honolulu in 1961 to a Kenyan father and an American mother. He organized communities in Chicago, studied law at Harvard, and in 2008 became the first African American president of the United States. Over two terms his administration took on healthcare, the economy, and foreign policy — each fight contentious, none of them simple.
 
-Barack Obama was born in Honolulu, Hawaii, in 1961, to a Kenyan father and an American mother. He organized communities in Chicago and studied at Harvard Law School before entering politics — a path that combined grassroots work with elite credentials.
+He was also, unmistakably, a talker. His speeches leaned on narrative and cadence more than most presidents', and that emphasis on how something is said, not just what is said, is part of what people remember.
 
-In 2008, he became the first African American president of the United States. Over two terms, his administration pursued initiatives in healthcare, the economy, and foreign policy, each drawing significant debate.
-
-He was known for his oratory. Public communication was central to how he led, not incidental to it, and his emphasis on narrative shaped how his presidency was perceived.
-
-Since leaving office, Obama has continued writing, speaking, and engaging publicly on issues he cares about, rather than withdrawing from public life.
+Since leaving office he's kept working rather than retreating: writing, speaking, weighing in on the issues he's chosen to stay involved with. He no longer holds office, but he hasn't stopped being a public figure — a distinction that says something about what "influence" means once the title is gone.

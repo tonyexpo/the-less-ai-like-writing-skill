@@ -36,7 +36,8 @@ CASES: list[tuple[str, str, str]] = [
     ),
     (
         "rule_of_three",
-        "It improves speed, reliability, and flexibility for every team.",
+        "It improves speed, reliability, and flexibility for every team. "
+        "The rollout was fast, safe, and reversible.",
         "It improves speed and reliability.",
     ),
     (
@@ -68,6 +69,36 @@ CASES: list[tuple[str, str, str]] = [
         "Let me know if you would like more.",
         "The caveats are in the appendix, with the raw timings.",
     ),
+    # The four categories below come from StoryScope (arXiv:2604.03136). Each
+    # is a narrow lexical proxy for a whole-document judgment, so the negative
+    # case matters even more than usual - see the module docstring in
+    # tools/patterns.py for the floors and reasoning.
+    (
+        "metaphor_saturation",
+        "If the first version was a sketch, this one is the underpainting. "
+        "Confidence in the old system eroded, then cracked, then gave way entirely.",
+        "The rollout felt like pulling teeth, but the queue backs up once "
+        "the worker pool saturates, which is a known limit of the design.",
+    ),
+    (
+        "missing_anchors",
+        "A popular streaming service ran into trouble last year after a "
+        "well-known book on management inspired its new engagement strategy.",
+        "Netflix ran into trouble last year after 'High Output Management' "
+        "inspired its new engagement strategy.",
+    ),
+    (
+        "over_unified_argument",
+        "Each of these threads points back to the same underlying question. "
+        "Taken together, the picture is clear, and those aren't contradictions, they're the point.",
+        "Two of the three changes helped. The third one I still can't explain.",
+    ),
+    (
+        "unrelieved_earnestness",
+        "This journey has been both challenging and rewarding. Every obstacle "
+        "became an opportunity to grow, and we carry a deep sense of gratitude.",
+        "The migration was straightforward and finished on time.",
+    ),
 ]
 
 STRUCTURAL_CASES: list[tuple[str, str, str]] = [
@@ -89,6 +120,24 @@ STRUCTURAL_CASES: list[tuple[str, str, str]] = [
 @pytest.mark.parametrize("category,positive,negative", CASES + STRUCTURAL_CASES, ids=lambda v: None)
 def test_detector_fires_on_positive(category, positive, negative):
     assert score_text(positive).count_of(category) > 0, f"{category} missed its positive case"
+
+
+@pytest.mark.parametrize("category,positive,negative", CASES + STRUCTURAL_CASES, ids=lambda v: None)
+def test_detector_scores_above_zero_on_positive(category, positive, negative):
+    """Stronger than test_detector_fires_on_positive: a canonical positive
+    example that only counts a hit but never clears the category's own floor
+    (see CATEGORY_FLOORS) is a weak test case wearing a passing test - it
+    proves the regex matched something, not that the category would ever
+    show up in a report. A prior version of this suite had exactly that gap
+    for the two floor-of-2 categories, discovered during an adversarial
+    review pass that also found SKILL.md's own worked examples for those
+    categories had the identical problem."""
+    report = score_text(positive)
+    count = report.count_of(category)
+    assert report.score_of(category) > 0, (
+        f"{category} counted {count} hit(s) but still scored 0 - the positive case doesn't "
+        f"clear this category's floor, so it's too weak to demonstrate the category at all"
+    )
 
 
 @pytest.mark.parametrize("category,positive,negative", CASES + STRUCTURAL_CASES, ids=lambda v: None)
@@ -150,11 +199,11 @@ def test_total_is_the_sum_of_categories():
     fixture = Path(__file__).parent / "fixtures/slop/obama_overview.md"
     report = score_text(fixture.read_text(encoding="utf-8"))
     assert report.total == sum(c.score for c in report.categories)
-    assert 0 <= report.total <= 24
+    assert 0 <= report.total <= 2 * len(CATEGORIES)
 
 
 @pytest.mark.parametrize(
-    "total,band", [(0, "low"), (5, "low"), (6, "revise"), (11, "revise"), (12, "rewrite"), (24, "rewrite")]
+    "total,band", [(0, "low"), (7, "low"), (8, "revise"), (15, "revise"), (16, "rewrite"), (32, "rewrite")]
 )
 def test_bands_follow_the_skill_thresholds(total, band):
     from tools.slopscore import _band
@@ -217,3 +266,51 @@ def test_technical_repetition_is_not_penalised():
     repetition must not cost anything."""
     text = "The parser caches the config. The parser reads it once. The parser never re-reads it."
     assert score_text(text).count_of("synonym_cycling") == 0
+
+
+# StoryScope (arXiv:2604.03136) explicitly found these do NOT separate AI from
+# human writing - see tools/patterns.py's module docstring. The point of these
+# tests is to keep it that way: a future change that adds a raw em-dash-count
+# or sentence-length detector should fail loudly, not slip in quietly because
+# it "sounds right".
+
+
+def test_frequent_em_dashes_alone_are_not_penalised():
+    """The paper measured em-dash/parenthetical-aside frequency directly (its
+    own question wording covers 'parentheses, dashes, or commas') and found
+    TVD 0.03 - negligible, and if anything tilted toward human writing. Do not
+    add a frequency-based em-dash detector on the strength of that paper."""
+    text = (
+        "The service degraded at 14:02 — a config push, not a deploy — and "
+        "recovered by 14:11. The root cause — a missing timeout — was fixed "
+        "the same day, and the postmortem — three paragraphs, no blame — "
+        "went out that afternoon."
+    )
+    report = score_text(text)
+    assert report.total == 0, report.as_dict(with_hits=True)
+
+
+def test_short_fragments_alone_are_not_penalised():
+    """The paper found sentence fragments run the OPPOSITE direction from folk
+    wisdom: present and stylistically significant in 85% of AI passages versus
+    67% of human ones. A punchy fragment is not evidence of a human hand, and
+    the scorer must not reward choppiness as if it were."""
+    text = "Shipped Tuesday. Broke Wednesday. Fixed by lunch. Nobody was happy about it."
+    assert score_text(text).total == 0
+
+
+def test_missing_anchors_does_not_fire_when_the_thing_is_actually_named():
+    """missing_anchors exists to catch vague placeholders standing in for a
+    name the author knows. A round of adversarial review found the un-guarded
+    version scoring 2/2 - the category's maximum - on a sentence that named
+    two real products, because the adjective+noun pattern didn't check
+    whether a name preceded it. This is the regression test for that fix."""
+    named = "Kubernetes is a popular platform for container orchestration, and Docker is a well-known tool."
+    assert score_text(named).count_of("missing_anchors") == 0
+    also_named = "React is a popular framework; we picked it because the team already knew it."
+    assert score_text(also_named).count_of("missing_anchors") == 0
+    # The guard must not swallow the genuinely vague cases it's meant to keep.
+    still_vague = "A popular streaming service ran into trouble last year."
+    assert score_text(still_vague).count_of("missing_anchors") > 0
+    also_vague = "We picked a popular platform after evaluating three vendors."
+    assert score_text(also_vague).count_of("missing_anchors") > 0

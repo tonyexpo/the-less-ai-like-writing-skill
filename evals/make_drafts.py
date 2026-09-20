@@ -22,7 +22,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
+from tools.patterns import CATEGORIES  # noqa: E402
 from tools.slopscore import score_text  # noqa: E402
+
+SCORER_MAX = 2 * len(CATEGORIES)
 
 DRAFT_DIR = REPO_ROOT / "evals/drafts"
 PROMPTS = REPO_ROOT / "evals/prompts.json"
@@ -78,9 +81,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--min-score", type=int, default=10, help="reject drafts below this")
     parser.add_argument("--attempts", type=int, default=4, help="resamples before giving up")
     parser.add_argument("--out-dir", type=Path, default=DRAFT_DIR)
+    parser.add_argument("--prompts", default="", help="comma-separated prompt ids (default: all)")
     args = parser.parse_args(argv)
 
     specs = json.loads(PROMPTS.read_text(encoding="utf-8"))["prompts"]
+    if args.prompts:
+        wanted = {p.strip() for p in args.prompts.split(",") if p.strip()}
+        unknown = wanted - {s["id"] for s in specs}
+        if unknown:
+            parser.error(f"unknown prompt ids: {', '.join(sorted(unknown))}")
+        specs = [s for s in specs if s["id"] in wanted]
     out_dir = args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -92,11 +102,11 @@ def main(argv: list[str] | None = None) -> int:
                 rejected.append((prompt_id, "no output"))
                 continue
             if total < args.min_score:
-                rejected.append((prompt_id, f"best of {args.attempts} was {total}/24"))
+                rejected.append((prompt_id, f"best of {args.attempts} was {total}/{SCORER_MAX}"))
                 continue
             report = score_text(text)
             (out_dir / f"{prompt_id}.md").write_text(text + "\n", encoding="utf-8")
-            print(f"  {prompt_id:<20} {report.total}/24 ({report.band}), {report.words} words")
+            print(f"  {prompt_id:<20} {report.total}/{SCORER_MAX} ({report.band}), {report.words} words")
 
     for prompt_id, why in rejected:
         print(f"  rejected {prompt_id}: {why}", file=sys.stderr)

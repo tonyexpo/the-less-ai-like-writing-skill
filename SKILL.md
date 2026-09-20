@@ -20,7 +20,7 @@ Use this skill when the user asks for writing that should feel:
 - less templated
 - more direct, concrete, or idiomatic
 
-Do not claim that the resulting text will defeat AI detectors. Detection systems are unreliable and no stylistic process can guarantee a classification outcome.
+Do not claim that the resulting text will defeat AI detectors. Detection systems are unreliable and no stylistic process can guarantee a classification outcome. This is not a hedge: a 2026 study of AI-generated fiction (StoryScope, arXiv:2604.03136) found that its 304 narrative features — across ten dimensions including plot and style, with no access to raw text at all — separate human from AI writing at 93.2% macro-F1. Reducing generic phrasing changes some of what those features measure; it does not change all of it, and it is not a way to hide what wrote a piece.
 
 ---
 
@@ -71,6 +71,13 @@ Rule:
 After each factual sentence, ask whether the interpretation adds information.
 
 If not, delete it.
+
+This is one of the best-evidenced patterns in the whole audit. In StoryScope's
+narrative-feature study (arXiv:2604.03136), the narrator explicitly commented
+on the meaning of events in 76.4% of AI stories versus 51.6% of human ones,
+and themes were rated fully explicit rather than left implicit in 74.8% of AI
+stories versus 37.4% of human ones — the fourth-strongest separator the study
+found among 304 narrative features tested.
 
 ---
 
@@ -196,6 +203,13 @@ Delete generic conclusions.
 
 End on the last useful fact, argument, image, implication, or decision.
 
+The same pattern shows up as structure, not just phrasing: in the StoryScope
+study (arXiv:2604.03136), AI-written stories kept going well past their climax
+— multiple extra scenes, time jumps, or an epilogue — in 51.3% of cases versus
+14.8% for human stories, which far more often ended at or just after the
+climax. Writing past the natural stopping point and zooming out to a
+summarizing vantage is a structural form of "looking ahead."
+
 ---
 
 ### 10. Vague attribution
@@ -248,6 +262,124 @@ For short prose, paragraphs are often better than a miniature report.
 
 ---
 
+The four patterns below come from StoryScope (Russell et al., arXiv:2604.03136),
+a study of ~61,600 parallel human and LLM stories that induces 304 features
+across ten dimensions (plot, style, agents, and seven others) and finds them,
+together, separable from human writing at 93.2% macro-F1. Style is in fact
+the single highest-separating dimension on average and supplies 11 of the 20
+strongest individual features - the strongest of them (category 13's, below)
+is second-strongest overall. The study is about long-form fiction, not blog
+posts or memos, so each pattern here is the subset of its findings that
+plausibly transfers to ordinary prose, restated as prose advice rather than
+as the paper's own narrative-specific language. All
+four are whole-document judgments — call them by reading the piece, not by
+scanning for a keyword.
+
+### 13. Metaphor saturation
+
+AI-like:
+> If the first release was a sketch, this one is the underpainting. Each
+> layer since has pressed down on the one before it, the way sediment does.
+> The whole product eroded, then cracked, then gave way to something
+> sturdier underneath.
+
+Prefer:
+> The first release was rough. Since then we have shipped four incremental
+> improvements, each fixing what the last one exposed.
+
+Rule:
+One well-chosen figure of speech can be the clearest way to say something.
+A figure of speech that gets extended across several sentences, or a single
+image (tides, layers, threads, weather, machinery) that recurs as the piece's
+organizing device, usually means a plain statement was avoided rather than
+earned. Cut back to the plain statement and keep the figure only if it is
+still doing real work once the extension is gone.
+
+Evidence: figurative density rated as heavy in 65% of AI-written passages
+versus 18% of human ones; an image extended across multiple sentences in 83%
+of AI passages versus 40% of human ones (StoryScope, TVD 0.48 - the single
+strongest style-dimension feature in the study, though not the strongest of
+all 304).
+
+---
+
+### 14. Missing real-world anchors
+
+AI-like:
+> A popular streaming service ran into trouble last year after a well-known
+> book on management inspired its new engagement strategy.
+
+Prefer:
+> Netflix ran into trouble last year after "High Output Management" inspired
+> its new engagement strategy.
+
+Rule:
+Use the real name once you know it: the product, the company, the book, the
+person, the date, the number. "A popular streaming service" and "a well-known
+book" are not more careful than the real names — they are less informative,
+and the reader cannot check them. If the specific isn't known, say so plainly
+("I don't know which one") rather than reaching for a vague placeholder.
+
+Evidence: reference to a specific, nameable brand or cultural touchstone
+appeared in 40% of human-written passages versus 13% of AI-written ones —
+a 27-point gap, one of the larger human-leaning ones StoryScope measured.
+
+---
+
+### 15. Over-unified argument
+
+AI-like:
+> Each of these examples points back to the same underlying theme: that
+> patience and ambition were never really in tension. Taken together, the
+> picture is clear.
+
+Prefer:
+> Two of the three setbacks were avoidable in hindsight. The third we still
+> don't fully understand.
+
+Rule:
+Real arguments usually have a loose end: a detail that doesn't fit the
+thesis but is true anyway, an example that only partly supports the point, a
+verdict that stays mixed. Forcing every thread to serve one clean idea, and
+resolving every tension into a tidy lesson, is a sign the material was pruned
+to fit a conclusion rather than reported as it was. Keep the loose end if it
+is real.
+
+Evidence: thematic unity rated maximal in 74% of AI-written stories versus
+41% of human ones (TVD 0.33). Human-written stories left the ending
+ambiguous more often (35% human vs 19% AI) and gave the central figure a
+morally mixed verdict more often (58% human vs 38% AI) than AI-written ones
+did (StoryScope).
+
+---
+
+### 16. Unrelieved earnestness
+
+AI-like:
+> This journey has been both challenging and rewarding. Every obstacle
+> became an opportunity to grow, and the results speak for themselves.
+
+Prefer:
+> The migration took three weeks longer than planned. I'm still annoyed
+> about the two weeks we lost to a config bug nobody caught in review.
+
+Rule:
+A piece that never once undercuts itself, treats every difficulty as
+meaningful rather than merely annoying, and maintains one solemn register
+from start to finish reads as performed sincerity rather than the real
+thing. Real writing usually has at least one dry, wry, or deflating moment,
+or admits a plain annoyance instead of reframing it as growth. This does not
+apply to subject matter that has earned its gravity — an incident report on
+a safety failure, an obituary — where plain, unadorned seriousness is
+simply accurate.
+
+Evidence: AI-written passages were rated entirely straight-faced with no
+discernible humor in 38% of cases versus 12% for human-written ones; an
+ironic or wry dominant tone appeared in 36% of human passages versus 13% of
+AI ones (StoryScope).
+
+---
+
 ## Human-Like Counterpatterns
 
 Prefer the following.
@@ -282,6 +414,29 @@ Allow:
 Do not manufacture variation mechanically.
 
 The rhythm should follow the argument.
+
+This is prose advice, not an anti-AI-detection tactic: sentence length barely
+separates AI from human writing in practice (StoryScope, arXiv:2604.03136,
+found only a weak signal, and sentence fragments specifically ran the other
+way — present and stylistically significant in 85% of AI-written passages
+versus 67% of human ones). A string of punchy fragments is not evidence of a
+human hand. Vary rhythm because it serves the argument, not to seem human.
+
+---
+
+### Loose, digressive sentences
+
+Not every sentence needs to resolve cleanly. A sentence that runs on, picks
+up a second clause loosely with "and" or a comma rather than a tight
+subordinate structure, and only gets to the point after a slight detour, is
+a normal feature of how people actually write and talk.
+
+AI prose defaults to tight parallel construction almost universally instead:
+StoryScope found frequent parallel or list-like sentence structure in 99% of
+AI-written passages versus 70% of human ones, while loosely-joined,
+multi-clause chains ran the other way (55% AI versus 76% human). Do not force
+a loose sentence in edit, but do not tighten one into parallel structure
+purely for polish either.
 
 ---
 
@@ -443,12 +598,16 @@ Categories:
 10. Generic conclusion
 11. Meta-chatbot phrasing
 12. Artificially comprehensive coverage
+13. Metaphor saturation
+14. Missing real-world anchors
+15. Over-unified argument
+16. Unrelieved earnestness
 
 Interpretation:
 
-- 0–5: low density of common AI-like patterns
-- 6–11: revise the most repetitive patterns
-- 12+: substantial rewrite recommended
+- 0–7: low density of common AI-like patterns
+- 8–15: revise the most repetitive patterns
+- 16+: substantial rewrite recommended
 
 This score is a writing heuristic, not an AI detector.
 
@@ -520,7 +679,7 @@ A safer formulation is:
 
 When a full workflow is unnecessary, apply this internal instruction:
 
-> Write with high specificity and low rhetorical padding. Prefer simple accurate verbs, concrete nouns, natural repetition, variable sentence rhythm, and selective explanation. Avoid generic significance claims, automatic "highlighting/underscoring" commentary, promotional language, forced three-part lists, template contrasts, synonym cycling, fake completeness, vague attribution, excessive headings, chatbot meta-language, and generic conclusions. Do not add deliberate errors or artificial quirks. Preserve the author's established voice when available.
+> Write with high specificity and low rhetorical padding. Prefer simple accurate verbs, concrete nouns, natural repetition, variable sentence rhythm, and selective explanation. Avoid generic significance claims, automatic "highlighting/underscoring" commentary, promotional language, forced three-part lists, template contrasts, synonym cycling, fake completeness, vague attribution, excessive headings, chatbot meta-language, and generic conclusions. Do not extend a single figure of speech across the whole piece, do not use vague placeholders where a real name is known, do not force every example toward one tidy lesson, and do not maintain one solemn register with no tonal relief anywhere. Do not add deliberate errors or artificial quirks. Preserve the author's established voice when available.
 
 ---
 
@@ -548,6 +707,13 @@ Before returning the text, ask:
 
 7. Did I introduce imperfections merely to simulate humanity?
    - If yes, remove them.
+
+8. Did I extend a figure of speech past the point it was earning its place,
+   reach for a vague placeholder where I actually knew the name, force a
+   mixed result into one tidy lesson, or write a whole piece with no tonal
+   relief anywhere?
+   - If yes, cut back to the plain statement, name the thing, keep the loose
+     end, or let one moment be dry.
 
 The target is not imperfect writing.
 

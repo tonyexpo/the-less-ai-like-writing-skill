@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Score a text for the AI-like patterns catalogued in SKILL.md.
 
-The scale is the one in the skill's own audit: each of twelve categories gets
-0 (absent), 1 (occasional) or 2 (frequent), for a total of 0-24.
+The scale is the one in the skill's own audit: each of sixteen categories gets
+0 (absent), 1 (occasional) or 2 (frequent), for a total of 0-32.
 
-    0-5   low density of common AI-like patterns
-    6-11  revise the most repetitive patterns
-    12+   substantial rewrite recommended
+    0-7    low density of common AI-like patterns
+    8-15   revise the most repetitive patterns
+    16+    substantial rewrite recommended
 
 This is a writing heuristic, not an AI detector. A low score means the text
 avoids a specific list of tells; it says nothing about who wrote it.
@@ -38,9 +38,16 @@ from tools.patterns import (
 
 # Minimum hits before a category scores at all. One three-item list is ordinary
 # English; a habit of them is the tell, and SKILL.md asks for the number of items
-# the content requires rather than banning the shape. Everything else trips on
-# the first hit.
-CATEGORY_FLOORS: dict[str, int] = {"rule_of_three": 2}
+# the content requires rather than banning the shape. metaphor_saturation and
+# over_unified_argument get the same treatment: each is a narrow lexical proxy
+# for a whole-document judgment (see patterns.py), and one incidental match is
+# not evidence of a document-wide pattern. Everything else trips on the first
+# hit.
+CATEGORY_FLOORS: dict[str, int] = {
+    "rule_of_three": 2,
+    "metaphor_saturation": 2,
+    "over_unified_argument": 2,
+}
 
 # A category counted this many times per 100 words is "frequent" (score 2).
 FREQUENT_RATE = 1.0
@@ -48,7 +55,17 @@ FREQUENT_RATE = 1.0
 # without reaching the rate threshold on a small denominator.
 FREQUENT_COUNT = 4
 
-BANDS = ((5, "low"), (11, "revise"), (24, "rewrite"))
+# These scale with the category count (they were 5/11/24 when there were
+# twelve categories, rescaled here to roughly the same proportions of the new
+# 32-point max and then rounded to a clean fraction: 16 is exactly half). That
+# is a deliberate choice, not an accident - the alternative, holding the raw
+# point cutoffs fixed while the max grows, would mean "12+" quietly gets
+# easier to hit as new categories are added, which defeats the point of
+# having bands at all. If a category is ever added or removed, rescale these
+# by hand and update the "Interpretation" prose in SKILL.md's AI-Likeness
+# Audit section to match - tests/test_skill_contract.py checks the two stay
+# in sync, but only for whatever numbers are written here.
+BANDS = ((7, "low"), (15, "revise"), (32, "rewrite"))
 
 _FENCE_RE = re.compile(r"^```.*?^```", re.MULTILINE | re.DOTALL)
 _INLINE_CODE_RE = re.compile(r"`[^`\n]+`")

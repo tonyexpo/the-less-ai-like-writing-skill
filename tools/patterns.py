@@ -7,6 +7,41 @@ change plus a test, not a rewrite of the scorer.
 Language support is English only. The tables are keyed by language so an Italian
 or Spanish pack can be added without touching the scoring code, but nothing but
 ``en`` is calibrated today.
+
+## Provenance of the last four categories
+
+``metaphor_saturation``, ``missing_anchors``, ``over_unified_argument`` and
+``unrelieved_earnestness`` come from StoryScope (Russell et al., arXiv:2604.03136),
+a study that induces 304 narrative features from ~61,600 parallel human/LLM
+stories; those features (no raw text access) separate human from AI writing
+at 93.2% macro-F1. The paper is about long-form fiction; these four are the
+subset of its findings that plausibly transfer to expository prose, each
+backed by a total variation distance (TVD) of 0.16-0.48 between the AI and
+human value distributions for its underlying feature(s), independently
+re-derived from the paper's own released feature data (its PDF was
+unreachable when this was written) rather than trusted from a summary. See
+the "Evidence" line under each category in SKILL.md for the percentages -
+not every line states its TVD explicitly (a couple of the underlying
+features are multi-select, where "TVD" admits more than one reasonable
+definition, so the percentages are cited alone rather than picking one) -
+and evals/README.md for how the re-derivation was checked.
+
+All four are whole-document semantic judgments in the paper (does one conceit
+structure the whole piece? is every example serving the same thesis?). The
+regexes below are narrow lexical proxies for a small set of common surface
+tells, calibrated against real generated text rather than reimplementing the
+paper's LLM-judged features. Read that plainly: a text can exhibit the
+underlying pattern strongly and trip none of these regexes, and a paraphrase
+of one of SKILL.md's own worked examples frequently does exactly that. They
+are validated as detector *mechanics* (tests/test_detectors.py) and as a
+description of real slop this project observed, not as reliable measures of
+how often the pattern occurs in the wild - see evals/README.md for what that
+means for the eval numbers. Two things this project's re-derivation of the
+paper's data explicitly found do NOT separate AI from human text are
+deliberately absent from every table: raw em-dash/parenthetical frequency
+(TVD 0.03) and sentence length (TVD 0.03-0.08, and sentence fragments
+actually run more common in AI text, 85% vs 67%, the opposite of the folk
+assumption). Do not add either as a detector without new evidence.
 """
 
 from __future__ import annotations
@@ -25,6 +60,16 @@ CATEGORIES: dict[str, str] = {
     "template_conclusion": "Generic conclusion",
     "meta_chatbot": "Meta-chatbot phrasing",
     "artificial_completeness": "Artificially comprehensive coverage",
+    # Added from StoryScope (arXiv:2604.03136), a narrative-feature study of
+    # human vs. LLM fiction. These four are whole-document tendencies with only
+    # loose lexical proxies here — see the module docstring and evals/README.md
+    # for the paper findings that justify each one, and for what the paper
+    # explicitly found does NOT distinguish AI text (raw em-dash frequency,
+    # sentence length) which is deliberately not encoded anywhere below.
+    "metaphor_saturation": "Metaphor saturation",
+    "missing_anchors": "Missing real-world anchors",
+    "over_unified_argument": "Over-unified argument",
+    "unrelieved_earnestness": "Unrelieved earnestness",
 }
 
 # Categories scored by a structural pass rather than by the regex tables.
@@ -137,6 +182,16 @@ EN_LEXICAL: dict[str, list[str]] = {
         r"\bit'?s\s+not\s+(?:about|that)\b[^.!?\n]{0,60}?\bit'?s\b",
         r"\bmore\s+than\s+(?:just|simply)\b",
         r"\bless\s+(?:about|of)\b[^.!?\n]{0,60}?\bmore\s+(?:about|of)\b",
+        # NOT included: a "where the old X did A, the new X does B" pattern
+        # (a real construction - "where our old system asked users to adapt,
+        # our new system adapts to the user" - one instance in this project's
+        # eval draft corpus, plus one echo of it in a revision, two hits total
+        # across ~100 real documents in testing). Removed after an
+        # adversarial review pass found it false-positives just as readily on
+        # a plain factual comparison ("where the old boiler burned oil, the
+        # new boiler burns gas"), and this category has no floor, so a single
+        # ordinary sentence like that would score it - not enough real value
+        # to justify the risk.
     ],
     "rule_of_three": [
         # Three short comma-separated items, Oxford comma optional.
@@ -228,6 +283,101 @@ EN_LEXICAL: dict[str, list[str]] = {
         r"\bwould\s+you\s+like\s+me\s+to\b",
         r"\bi\s+can\s+also\s+\w+",
         r"\bin\s+this\s+(?:article|post|guide|piece),?\s+(?:we|i)(?:'ll|\s+will)\b",
+    ],
+    "metaphor_saturation": [
+        # The extended-analogy opener: "if X was A, this is B". The paper's
+        # single strongest style feature (figurative density, TVD 0.483) is a
+        # whole-document judgment; this catches only its clearest syntactic
+        # tell, deliberately narrow to avoid flagging one incidental idiom.
+        r"\bif\s+(?:the\s+)?\w+(?:\s+\w+){0,4}\s+was\s+an?\s+\w+,\s+"
+        r"(?:this|it|the\s+\w+)(?:\s+\w+)?\s+is\s+(?:the|an?)\b",
+        # A three-step figurative escalation ("eroded, then cracked, then gave
+        # way") — the gradual-collapse conceit the paper's examples lean on.
+        r"\b\w+ed,\s+then\s+\w+ed,\s+then\s+(?:\w+\s+)?\w+\b",
+        r"\bis\s+the\s+\w+\s+(?:you|we|they)\s+pay\s+(?:on|for)\b",
+        r"\b(?:a|the)\s+(?:kind|sort)\s+of\s+\w+\s+that\s+(?:presses?|weighs?|sits?)\b",
+        # NOT included, on purpose: a bare "is a kind of" or "think of X as Y".
+        # Both are ordinary definitional/explanatory devices - "a raccoon is a
+        # kind of procyonid", "think of the cache as a dictionary" - not a
+        # reached-for figure. An adversarial review pass found both false-
+        # positiving on legitimate taxonomic and explanatory prose; removed
+        # rather than narrowed, since no simple qualifier reliably tells the
+        # two apart. See evals/README.md's "How narrow, concretely" section.
+    ],
+    "missing_anchors": [
+        # A generic placeholder standing in for a thing that has a real name.
+        # Distinct from vague_attribution: this fires on entity-naming
+        # avoidance in illustrations and asides that assert nothing, not on
+        # unsourced claims.
+        #
+        # The four lookbehinds guard against the category's own worst failure
+        # mode: "Kubernetes is a popular platform" names Kubernetes right
+        # there, but without the guard the adjective+noun pattern fires on "a
+        # popular platform" regardless of what precedes it. Excluding an
+        # immediately preceding is/was/are/were rules out exactly the
+        # "NAMED_THING is a popular X" predicate-nominal construction (the
+        # common case where the sentence already did name something) while
+        # still catching the phrase as a subject ("A popular streaming
+        # service ran into trouble") or object ("we picked a popular
+        # platform") - an adversarial review pass found the un-guarded
+        # version scoring 2/2, the category's maximum, on a sentence that
+        # named two real products.
+        r"(?i)(?<!\bis\s)(?<!\bwas\s)(?<!\bare\s)(?<!\bwere\s)"
+        r"\ba\s+(?:popular|leading|major|well[- ]known|certain|large|prominent|renowned)\s+"
+        r"(?:streaming\s+service|company|provider|platform|framework|brand|book|author|"
+        r"study|report|organization|firm|app|tool|publication)\b",
+        r"(?i)(?<!\bis\s)(?<!\bwas\s)(?<!\bare\s)(?<!\bwere\s)"
+        r"\bone\s+(?:leading|major|well[- ]known|popular)\s+"
+        r"(?:company|provider|platform|framework|brand|tool|app)\b",
+        r"\bsome\s+companies\s+have\s+(?:begun|started)\s+(?:to\s+)?experiment",
+        r"\bstudies\s+in\s+recent\s+years\s+have\s+shown\b",
+        # NOT included: a separate "a major provider had an outage" pattern -
+        # it fully overlapped the adjective+noun pattern above on the common
+        # case ("a major provider") and double-counted a single sentence as
+        # two hits. The adjective+noun pattern above still catches that
+        # exact case, but not every variant - "a major cloud provider had an
+        # outage" no longer scores at all, since "cloud" breaks the
+        # adjective+noun adjacency the surviving pattern requires. Recall was
+        # already known to be narrow (see evals/README.md); this is one more
+        # instance of it, not a new kind of gap.
+    ],
+    "over_unified_argument": [
+        # Explicit cross-item unification language: every example, thread, or
+        # detail is announced as pointing to the same one idea. Distinct from
+        # template_conclusion (category 10), which is about generic sign-off
+        # phrasing rather than forced thematic unity.
+        r"\beach\s+of\s+these\s+(?:threads|examples|points|cases)\s+(?:points?|leads?|traces?)\s+back\s+to\b",
+        r"\ball\s+of\s+(?:this|these)\s+points?\s+to\s+(?:the\s+)?same\b",
+        r"\bthe\s+same\s+underlying\s+(?:question|idea|theme|pattern|truth)\b",
+        r"\bjust\s+as\s+\w+(?:\s+\w+){0,4},\s+so\s+(?:too\s+)?\w+\b",
+        r"\btaken\s+together,\s+(?:the|these)\b",
+        r"\bwhat\s+(?:all\s+of\s+)?this\s+(?:comes\s+down\s+to|boils\s+down\s+to)\s+is\b",
+        r"\bevery\s+(?:thread|example|detail)\s+(?:here\s+)?(?:points?|leads?|traces?)\s+back\s+to\b",
+        r"\bif\s+(?:this|that|\w+)\s+\w+(?:\s+\w+){0,3}\s+taught\s+(?:us|me)\s+anything,\s+it'?s\s+that\b",
+        r"\bthose\s+aren'?t\s+(?:contradictions|opposites|trade-?offs),\s+they'?re\b",
+        r"\bisn'?t\s+the\s+enemy\s+of\b",
+    ],
+    "unrelieved_earnestness": [
+        # Stock phrases from the solemn "corporate journey" register: nothing
+        # dry, wry, or deflating anywhere. A lexical proxy for a genuinely
+        # document-level absence (no irony anywhere), so it only catches the
+        # most common boilerplate, not the underlying tonal monotony itself.
+        r"\bthis\s+journey\s+has\s+been\b",
+        r"\bevery\s+(?:obstacle|challenge|setback)\s+(?:became|was)\s+an?\s+opportunity\b",
+        r"\b(?:challenging|difficult)\s+(?:but|yet)\s+(?:ultimately\s+)?rewarding\b",
+        r"\bembrac(?:e|ed|ing)\s+(?:the\s+)?complexity\s+rather\s+than\s+shy",
+        r"\bthe\s+(?:results|numbers|outcome)\s+speak\s+for\s+themselves\b",
+        r"\bwas\s+not\s+without\s+its\s+(?:challenges|difficulties)\b",
+        r"\ba\s+labor\s+of\s+love\b",
+        r"\ba\s+deep\s+sense\s+of\s+gratitude\b",
+        r"\bfew\s+experiences\s+teach\s+you\s+(?:more\s+)?about\b",
+        r"\bthat\s+(?:tension|struggle|friction),?\s+i'?ve\s+come\s+to\s+believe,?\s+is\s+where\b",
+        # NOT included, on purpose: a bare "required (great) patience/
+        # perseverance/resilience/dedication". That phrase is satisfied by
+        # ordinary factual difficulty reports ("required great patience
+        # because the clips are brittle") as often as by performed
+        # solemnity, and contributed zero real hits across the eval corpus
+        # when it was tried - removed rather than kept as dead weight.
     ],
 }
 

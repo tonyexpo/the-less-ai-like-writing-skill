@@ -7,11 +7,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tools.patterns import CATEGORIES
 from tools.slopscore import main
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SLOP = REPO_ROOT / "tests/fixtures/slop/obama_overview.md"
 HUMAN = REPO_ROOT / "tests/fixtures/clean/obama_note.md"
+MAX_SCORE = 2 * len(CATEGORIES)
 
 
 def run(*args: str, stdin: str = "") -> subprocess.CompletedProcess:
@@ -36,9 +38,9 @@ def test_json_report_is_valid_and_complete():
     payload = json.loads(result.stdout)
     assert len(payload) == 1
     entry = payload[0]
-    assert entry["max_total"] == 24
+    assert entry["max_total"] == MAX_SCORE
     assert entry["total"] == sum(c["score"] for c in entry["categories"])
-    assert len(entry["categories"]) == 12
+    assert len(entry["categories"]) == len(CATEGORIES)
     assert entry["categories"][0]["hits"], "hits should be included by default"
 
 
@@ -66,7 +68,7 @@ def test_max_score_gate_fails_slop():
 def test_multiple_files_are_reported_together():
     result = run("--quiet", str(SLOP), str(HUMAN))
     assert result.returncode == 0
-    assert result.stdout.count("/24") == 2
+    assert result.stdout.count(f"/{MAX_SCORE}") == 2
 
 
 def test_main_is_importable_and_returns_exit_code(capsys):

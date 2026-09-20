@@ -51,16 +51,21 @@ jobs:
           python-version: "3.12"
 
       # The scorer has no runtime dependencies. If this step needs a pip
-      # install, something has crept into tools/.
+      # install, something has crept into tools/. Thresholds are read from
+      # tools/slopscore.py rather than hardcoded, so they track the category
+      # count instead of silently going stale when it changes.
       - name: Score the human corpus (must stay in the low band)
-        run: python -m tools.slopscore --quiet --max-score 5 tests/fixtures/clean/*.md
+        run: |
+          LOW_CEILING=$(python -c "from tools.slopscore import BANDS; print(BANDS[0][0])")
+          python -m tools.slopscore --quiet --max-score "$LOW_CEILING" tests/fixtures/clean/*.md
 
       - name: Score the slop corpus (must stay in the rewrite band)
         run: |
           python - <<'PY'
           import glob, sys
-          from tools.slopscore import score_file
-          bad = [p for p in glob.glob("tests/fixtures/slop/*.md") if score_file(p).total < 12]
+          from tools.slopscore import score_file, BANDS
+          rewrite_floor = BANDS[1][0] + 1
+          bad = [p for p in glob.glob("tests/fixtures/slop/*.md") if score_file(p).total < rewrite_floor]
           if bad:
               sys.exit(f"slop fixtures no longer reach the rewrite band: {bad}")
           print("slop corpus ok")

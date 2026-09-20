@@ -1,23 +1,23 @@
-# The Legacy of Rome: What Institutional Decline Actually Looks Like
+# The Legacy of Rome: What Institutional Decline Can Teach Us
 
-The Western Roman Empire's decline in the 5th century CE is a case study in what happens when complexity outpaces adaptability.
+The Western Roman Empire didn't collapse from a single blow. It came apart over the 5th century CE, under a mix of economic strain, political drift, and outside pressure that arrived at roughly the same time. That combination is worth studying by anyone trying to understand how large organizations fail.
 
-## Economic Headwinds
+## Economic Strain
 
-Rome's economy faced mounting pressure in its final centuries. Some historians point to strained trade networks and currency debasement as contributing factors. Even established systems can be disrupted when the assumptions they were built on shift.
+In its final centuries, Rome's economy weakened. Some historians point to strained trade networks and currency debasement as contributing factors. Even a system built over centuries can come apart once its underlying assumptions stop holding.
 
 ## Political Fragmentation
 
-The empire also struggled with internal leadership problems: frequent turnover at the top, and competing centers of authority. This wasn't a single point of failure so much as a slow erosion of alignment.
+Leadership churned at the top, and authority split across competing centers. This wasn't one point of failure — it was a slower loss of alignment. Scale didn't save Rome; a shared sense of purpose might have.
 
-## External Pressures
+## External Pressure
 
-Meanwhile, groups beyond Rome's traditional borders were reshaping the geopolitical landscape. Whether these movements are described as invasions, migrations, or something in between, they point to a basic fact: no organization, however dominant, operates in a vacuum.
+Meanwhile, groups beyond Rome's borders were reshaping the map around it, whether through invasion, migration, or something harder to categorize. No organization, however dominant, exists apart from its surroundings. What happens inside an institution and what happens around it are never fully separable.
 
-## A Convergence of Factors
+## Three Threads, One Collapse
 
-Step back and what emerges isn't one villain but a convergence — economic strain, political drift, and external change arriving together. It's tempting to look for a single cause, but decline is rarely about one crisis. It's usually the interplay of several.
+Pull back and there's no single villain — economic strain, political drift, and external pressure arrived together. It's tempting to reach for one cause, but that misses the more useful point: decline is rarely about a single crisis. It's about how several pressures interact.
 
-## What This Means for Today
+## What This Means Now
 
-Institutions endure not because they avoid pressure, but because they build the capacity to absorb it. The fall of the Western Roman Empire is less a warning to fear than a prompt to ask whether the systems we're building now are designed for growth alone, or for resilience too.
+Institutions that last aren't the ones that avoid pressure. They're the ones built to absorb it. Rome's fall isn't a story to be afraid of — it's a reason to look at what we're building now and ask whether it's designed for more than growth.

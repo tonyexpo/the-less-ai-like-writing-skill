@@ -10,7 +10,7 @@ only thing that changes is what the system prompt carries:
 
 The ``generic`` arm is the one that makes the result mean anything. Without it
 the benchmark cannot tell the skill apart from the general effect of pasting
-some style guidance into the prompt, and a 12 KB instruction beating an empty
+some style guidance into the prompt, and a long instruction beating an empty
 one is not a finding.
 
 Read evals/README.md before quoting any number from this: the harness runs
@@ -40,6 +40,8 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from tools.patterns import CATEGORIES  # noqa: E402
 from tools.slopscore import score_text  # noqa: E402
+
+SCORER_MAX = 2 * len(CATEGORIES)
 
 SKILL_PATH = REPO_ROOT / "SKILL.md"
 DRAFT_DIR = REPO_ROOT / "evals/drafts"
@@ -223,7 +225,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             print(
                 f"  [{done}/{len(jobs)}] {stem:<20} {arm:<9} "
-                f"{error or f'{drafts[stem]} -> {report.total}/24'}",
+                f"{error or f'{drafts[stem]} -> {report.total}/{SCORER_MAX}'}",
                 file=sys.stderr,
             )
             if args.save_raw and text:

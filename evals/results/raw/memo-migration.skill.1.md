@@ -1,15 +1,15 @@
-# Postgres 12 → 16 Upgrade: What to Know Before the 14th
+# Postgres 12 → 16 Upgrade: the 14th
 
-On the 14th we're upgrading from Postgres 12 to Postgres 16.
+On the 14th, we're moving from Postgres 12 to Postgres 16.
 
-## What's Happening
+## What's happening
 
-Writes will freeze for roughly 20 minutes during the upgrade. If you have a hotfix or a feature branch to land, plan around that window.
+**Write freeze: about 20 minutes.** Writes pause; reads keep working. Dashboards, reports, and other read-heavy services should be largely unaffected.
 
-Read replicas stay up throughout. Dashboards, reports, and other read-heavy services should keep working without interruption.
+If you're planning a hotfix or wrapping up a feature branch, plan around this window.
 
-## Why This Approach
+## Why this approach
 
-We're keeping the freeze short and scoped, and leaving read traffic untouched, so the upgrade causes as little disruption as possible.
+The priorities here are minimal disruption and clear communication. We'd rather upgrade in a way people can plan around than rush it.
 
 More details will follow as the date gets closer.

@@ -25,8 +25,8 @@ MODEL_CLEAN = sorted((FIXTURES / "clean").glob("model-*.md"))
 DRAFTS = sorted((REPO_ROOT / "evals/drafts").glob("*.md"))
 
 # The bands from SKILL.md.
-SLOP_FLOOR = 12
-CLEAN_CEILING = 5
+SLOP_FLOOR = 16
+CLEAN_CEILING = 7
 # Real model slop is milder than the hand-written fixtures, so it gets its own
 # floor. Anything lower and the draft is not worth putting through the eval.
 DRAFT_FLOOR = 10
@@ -95,7 +95,7 @@ def test_clean_fixtures_trip_at_most_two_categories(path):
 @pytest.mark.parametrize("path", SLOP, ids=lambda p: p.name)
 def test_slop_fixtures_trip_most_categories(path):
     tripped = [c.key for c in score_file(path).categories if c.score > 0]
-    assert len(tripped) >= 9, f"{path.name} only tripped {tripped}"
+    assert len(tripped) >= 12, f"{path.name} only tripped {tripped}"
 
 
 def test_readme_stays_readable():

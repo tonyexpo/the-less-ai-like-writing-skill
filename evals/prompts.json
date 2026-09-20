@@ -4,7 +4,13 @@
     "already writes near-clean prose, so the skill has little to remove. The slop",
     "shows up in genres where the default register is promotional or essayistic.",
     "bio-obama and memo-migration are kept as negative controls: a benchmark that",
-    "only shows movement where movement is easy is not measuring anything."
+    "only shows movement where movement is easy is not measuring anything.",
+    "founder-retrospective was added for the four StoryScope-derived categories",
+    "(metaphor saturation, missing anchors, over-unified argument, unrelieved",
+    "earnestness): personal-narrative registers are where that paper's fiction-",
+    "derived findings are most likely to show up in prose, and the original nine",
+    "prompts (mostly explainer/marketing/technical registers) produced ~zero hits",
+    "on those four across 80 real generations. See evals/README.md."
   ],
   "prompts": [
     {
@@ -66,6 +72,18 @@
       "genre": "history",
       "control": false,
       "prompt": "Write about 400 words on why the Western Roman Empire fell."
+    },
+    {
+      "id": "founder-retrospective",
+      "genre": "personal-narrative",
+      "control": false,
+      "prompt": "Write a 400-word founder's retrospective, in the first person, looking back on the hard first year of building a small startup."
+    },
+    {
+      "id": "product-philosophy",
+      "genre": "engineering-essay",
+      "control": false,
+      "prompt": "Write a 400-word essay explaining the design philosophy behind why your engineering team rebuilt its product from the ground up."
     }
   ]
 }
