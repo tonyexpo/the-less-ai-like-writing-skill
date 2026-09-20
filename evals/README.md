@@ -119,17 +119,21 @@ move quoted in the main README mixes two changes. Splitting it apart:
 
 The `baseline`/`generic` means on the original 8 are bit-for-bit identical to
 the prior twelve-category run (they are the same reused raw text, rescored),
-so the like-for-like comparison is 2.96 → 5.17 - a bigger move than the
-headline 4.00, not a smaller one, attributable entirely to the strengthened
-guidance on *existing* categories (the StoryScope citations added to
-categories 2 and 10, the new "loose, digressive sentences" counterpattern,
-the corrected "variable sentence length" advice). Categories 13-16 did not
-drive it: on the original 8 drafts they scored 0.00 in every column. (A
-"where the old X did A, the new X does B" pattern was briefly added to
-`formulaic_contrast` this session, then removed after review found it fired
-just as readily on a plain factual comparison as on the rhetorical version -
-see `tools/patterns.py`'s comment there. It fired at most twice, real but
-negligible, before removal, so its absence changes nothing above.)
+so the like-for-like *score* comparison is 2.96 → 5.17 - a bigger move than
+the headline 4.00, not a smaller one. That score movement traces to the
+strengthened guidance on *existing* categories (the StoryScope citations
+added to categories 2 and 10, the new "loose, digressive sentences"
+counterpattern, the corrected "variable sentence length" advice): categories
+13-16 scored 0.00 in every column on the original 8 drafts, so none of
+*their own points* moved this number. Whether the guidance for 13-16 also
+helped indirectly, by making the model write text that scores better on
+other categories, is a real possibility this eval has no way to rule in or
+out. (A "where the old X did A, the new X does B" pattern was briefly added
+to `formulaic_contrast` this session, then removed after review found it
+fired just as readily on a plain factual comparison as on the rhetorical
+version - see `tools/patterns.py`'s comment there. It fired at most twice,
+real but negligible, before removal; it changes the 2-new-draft generic mean
+by 0.03 - see `product-philosophy.generic.1` - and nothing else above.)
 
 **The 2-new-draft slice is a live demonstration of exactly how noisy a small
 subset of this eval is - don't trust it, that's the point.** The `skill` arm
@@ -159,10 +163,18 @@ facts about a fixed, committed file, not resampled on every eval run. But
 four** despite containing a real "not the end of a journey, it was the
 beginning of a new one" closing move that reads as exactly the pattern
 categories 13 and 15 are meant to catch - the regexes just do not cover that
-phrasing. And every arm's *revision* of `founder-retrospective` - including
-`baseline`, which gets no system prompt at all - washed its two hits out to
-near zero, which rules out "the skill specifically suppresses this" as an
-explanation (baseline has no skill guidance and still lost the signal).
+phrasing. Revision affected the two categories differently: `over_unified_argument`
+dropped to 0 in every arm's revision of `founder-retrospective`, including
+`baseline`, which gets no system prompt at all - one data point against
+"the skill specifically suppresses this," since baseline has no skill
+guidance and lost the signal too. `unrelieved_earnestness`, by contrast,
+survived revision in `baseline` and `skill` (scoring 1 in all three repeats
+of each) and was lost only under `generic` - the opposite of what "generic
+advice is a weaker version of the skill" would predict, and not an effect
+either category's evidence line explains. Read this as one more sign that
+six revisions per arm is too few to draw a real conclusion from, not as
+evidence for any particular story about what revision does to these
+patterns.
 
 ### How narrow, concretely
 
@@ -177,7 +189,7 @@ next to the category it used to belong to:
 - `"Re-seating the connector required great patience because the clips are brittle."` used to score `unrelieved_earnestness` (a flat factual predicate) - the `required (great) patience/perseverance/...` pattern was removed; it had also contributed zero real hits anywhere in the eval corpus.
 - `"Where the old boiler burned oil, the new boiler burns gas."` used to score `formulaic_contrast` on a plain factual comparison - the "where the old X did A, the new X does B" pattern was removed (see the note above; it had fired twice, real but negligible, before removal).
 
-One more was narrowed rather than removed: `"Under the NDA I can only say
+Two more were narrowed rather than removed. `"Under the NDA I can only say
 that a major provider had an outage that week."` used to score
 `missing_anchors` **2/2** from a single sentence, because two of the
 category's patterns overlapped and both matched it; the redundant pattern
@@ -186,6 +198,20 @@ score anything at all is a closer call left open - "a major provider" is a
 genuinely vague placeholder, even in an otherwise legitimate confidentiality
 disclaimer.
 
+Worse than any of the three above: a **second** round of adversarial testing
+found `missing_anchors` scoring **2/2, the category's maximum**, on
+`"Kubernetes is a popular platform for container orchestration, and Docker
+is a well-known tool."` - a sentence that names two real products, in a
+category whose entire premise is that the text does *not* name things. The
+adjective+noun pattern matched "a popular platform" and "a well-known tool"
+regardless of what came before them. Fixed by excluding the phrase when it
+immediately follows "is/was/are/were" - the common shape of a sentence that
+already named its subject - while still catching it as a grammatical subject
+("A popular streaming service ran into trouble") or object ("we picked a
+popular platform"). `tests/test_detectors.py` now asserts both directions:
+named subjects like Kubernetes and React score 0, genuinely vague phrasing
+still scores above 0.
+
 False negatives remain, by design as regexes rather than semantic judgments,
 and none of the fixes above touched them - these are paraphrases of
 `SKILL.md`'s own worked examples that trigger nothing:
@@ -193,21 +219,46 @@ and none of the fixes above touched them - these are paraphrases of
 - `"If the first release was **like** a sketch, this one is **like** the underpainting."` → 0 (swapping `was a` for `was like a` defeats the metaphor pattern entirely)
 - A fully sustained four-sentence tide metaphor, no single clause matching the narrow triggers → 0
 - `"A **famous podcast** covered this, and a **widely-read essay** on management convinced the team..."` → `missing_anchors` stays at 0 (the pattern only knows a fixed list of nouns: "streaming service", "provider", "platform", and a handful of others)
-- `"Every one of these setbacks leads back to a single lesson. Seen as a whole, the picture is clear."` → `over_unified_argument` 0 (a clean paraphrase of SKILL.md's own category-15 example, worded just differently enough)
+- `"Every one of these setbacks leads back to a single lesson. Seen as a whole, the picture is clear."` → `over_unified_argument` 0 (worth being direct about: this is not a paraphrase written for this list - it is the *original* wording of SKILL.md's own category-15 example, before that example was edited, in the same fix round that removed the false positives above, to use words the surviving patterns actually recognize. The category's worked example was made to fit its own detector rather than the other way around; the original, equally valid wording is a documented miss.)
 - `"This has been a demanding and deeply fulfilling road. Every setback turned into a chance to learn, and the outcome speaks for itself."` → `unrelieved_earnestness` 0 (same shape as SKILL.md's own example, different vocabulary throughout)
 
 The honest conclusion: categories 13-16 are good, specific *writing guidance*
 - the SKILL.md prose and worked examples for all four hold up - but their
 regex proxies in `tools/slopscore.py` are calibration-sentence matchers
 today, not validated detectors of the underlying pattern in general text.
-This review pass raised their precision (three false positives fixed, a
-fourth narrowed) without touching their recall, which was never the claim -
-"narrow" is still the right word for what's left, and the false negatives
-above are the concrete evidence for why. Treat the scores in this eval, and
-any future eval, as a lower bound on how often these patterns actually
-occur, not a measurement of it. Widening recall past single source
-sentences - ideally by testing against a corpus nobody involved in writing
-the patterns has read - is the obvious next step.
+Two rounds of adversarial review raised their precision (five false
+positives fixed outright, two more narrowed rather than removed) without
+touching their recall, which was never the claim - "narrow" is still the
+right word for what's left, and the false negatives above are the concrete
+evidence for why.
+
+A second review pass, run specifically to check whether the first round's
+fixes actually held up, found the fixes were real but incomplete: they
+patched the specific inputs tested, not the general shape of the problem.
+Fresh adversarial inputs against the *surviving* patterns still find false
+positives in ordinary analytical and scientific register - verified here,
+not just reported:
+
+- `"Taken together, these measurements give a mean of 4.2 ms. Both failures share the same underlying pattern: a missing bounds check."` → `over_unified_argument` scores 1 (two ordinary sentences of scientific write-up, floor cleared)
+- `"The migration was not without its challenges: we lost two days to a DNS cache. And the numbers speak for themselves: 11s down from 96s."` → `unrelieved_earnestness` scores 2, the category's maximum, on a completely plain incident summary
+- `"From 2019 to 2021, revenue doubled."` → `formulaic_contrast` scores 1 on six words, no floor required (this pattern is unchanged from before this session's work, not a new regression)
+
+None of these were narrowed further - the same qualifier used to exclude the
+"Kubernetes is a popular platform" case above (excluding an immediately
+preceding is/was/are/were) doesn't generalize to phrases like "taken
+together" or "speak for themselves," which are just ordinary register with
+no comparably narrow syntactic tell to exclude on. Fixing them properly
+would mean either accepting more false negatives than these categories
+already have, or moving from regex to something that can read the
+surrounding sentence - out of scope for a lexical proxy.
+
+Treat the scores in this eval, and any future eval, as a lower bound on how
+often these patterns actually occur and an upper bound on how much to trust
+any single positive hit, not a measurement of either in isolation. Widening
+recall past single source sentences while also tightening precision on
+ordinary analytical and scientific register - ideally by testing against a
+corpus nobody involved in writing the patterns has read - is the obvious
+next step, and a bigger one than either review round attempted.
 
 ## Limitations
 

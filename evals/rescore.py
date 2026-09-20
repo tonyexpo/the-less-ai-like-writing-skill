@@ -10,18 +10,25 @@ categories without regenerating the `baseline`/`generic` arms, since neither
 arm's system prompt depends on SKILL.md content - only `skill` needed fresh
 generations (see evals/README.md for that reasoning in full).
 
-    python evals/rescore.py                       # rebuild, warn on drift
-    python evals/rescore.py --check                # exit 1 on drift, don't write
+    python evals/rescore.py                       # rebuild latest.json
+    python evals/rescore.py --check                # report drift, write nothing, exit 1 if found
     python evals/rescore.py --model sonnet --repeats 3
 
 This will happily rescore text that is stale relative to the *current*
-SKILL.md - it has no way to know that from the text alone. It prints a loud
-warning (and --check fails) when evals/results/raw/*.skill.*.md was generated
-against a different SKILL.md than the one on disk right now, using the sha256
-already stored in the previous latest.json as the baseline for "did SKILL.md
-change since". If nothing is stored yet, or every skill-arm file predates
-`meta.skill_sha256` being tracked, there is nothing to compare against and no
-warning is possible - regenerate with `run_eval.py --arms skill` if in doubt.
+SKILL.md - it has no way to know that from the text alone. What it CAN check:
+whether the `skill`-arm raw text on disk was generated against a different
+SKILL.md than the one on disk right now, by comparing sha256(SKILL.md) against
+the `meta.skill_sha256` already stored in the previous latest.json (the sha
+recorded the last time this file - or run_eval.py - wrote one). That is only
+evidence of drift since the *last write*, not a general guarantee: if nothing
+is stored yet, or the stored sha itself predates this field existing, there is
+nothing to compare against and no warning is possible - regenerate with
+`run_eval.py --arms skill --save-raw` if in doubt.
+
+--check is a dry run: it always reports the drift status and exits 1 if any
+was found, 0 otherwise, and never writes `--out` either way - safe to call in
+CI without touching a tracked results file. Without --check, drift merely
+prints a warning (results are written regardless).
 """
 
 from __future__ import annotations
@@ -57,7 +64,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model", default="sonnet", help="recorded in meta.model - does not affect scoring")
     parser.add_argument("--repeats", type=int, default=3, help="recorded in meta.repeats")
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--check", action="store_true", help="exit 1 on skill-arm drift instead of writing")
+    parser.add_argument(
+        "--check", action="store_true", help="dry run: report drift, write nothing, exit 1 if drift found"
+    )
     args = parser.parse_args(argv)
 
     draft_texts = {p.stem: p.read_text(encoding="utf-8") for p in sorted(DRAFT_DIR.glob("*.md"))}
@@ -104,17 +113,24 @@ def main(argv: list[str] | None = None) -> int:
 
     drift = prior_sha is not None and prior_sha != current_sha
     skill_arm_count = sum(1 for r in records if r["arm"] == "skill")
-    if drift and skill_arm_count:
-        print(
-            f"::warning:: {skill_arm_count} 'skill' arm file(s) may have been generated against a "
-            f"different SKILL.md (prior sha {prior_sha}, current {current_sha}). Their scores are "
-            "still whatever the current scorer sees in that text, but the text itself may not "
-            "reflect the SKILL.md you're about to commit. Regenerate with "
-            "`python evals/run_eval.py --arms skill --save-raw` if that matters here.",
-            file=sys.stderr,
-        )
-        if args.check:
-            return 1
+    drift_message = (
+        f"{skill_arm_count} 'skill' arm file(s) on disk were generated against a SKILL.md whose "
+        f"sha256 was {prior_sha}; the current SKILL.md hashes to {current_sha}. Their scores are "
+        "still whatever the current scorer sees in that text, but the text itself may not reflect "
+        "the SKILL.md you're about to commit. Regenerate with "
+        "`python evals/run_eval.py --arms skill --save-raw` if that matters here."
+        if drift and skill_arm_count
+        else None
+    )
+    if drift_message:
+        print(f"::warning:: {drift_message}", file=sys.stderr)
+
+    if args.check:
+        # A dry run: report drift status, touch nothing, exit non-zero only
+        # if drift was actually found (not merely "unknown" - see the
+        # docstring for what this can and can't detect).
+        print("no drift detected" if not drift_message else "drift detected", file=sys.stderr)
+        return 1 if drift_message else 0
 
     records.sort(key=lambda r: (r["draft_id"], r["arm"], r["rep"]))
     payload = {
@@ -129,8 +145,10 @@ def main(argv: list[str] | None = None) -> int:
             "harness": "claude-code-cli",
             "note": (
                 "Rebuilt by evals/rescore.py from raw text already on disk - no new model calls. "
-                "Some or all arms may have been generated under an earlier SKILL.md; see this run's "
-                "stderr output (not preserved here) for any drift warning that was printed."
+                + (
+                    drift_message
+                    or "No SKILL.md drift detected between the skill-arm raw text and the SKILL.md committed alongside this file."
+                )
             ),
         },
         "summary": summarise(records, draft_reports),
@@ -140,7 +158,11 @@ def main(argv: list[str] | None = None) -> int:
     args.out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
     s = payload["summary"]
-    print(f"wrote {args.out.relative_to(REPO_ROOT)}", file=sys.stderr)
+    try:
+        shown_path = args.out.relative_to(REPO_ROOT)
+    except ValueError:
+        shown_path = args.out
+    print(f"wrote {shown_path}", file=sys.stderr)
     print(f"  runs_ok {s['runs_ok']}  runs_failed {s['runs_failed']}  draft_mean {s['draft_mean']}")
     for arm in ARMS:
         a = s["arms"][arm]

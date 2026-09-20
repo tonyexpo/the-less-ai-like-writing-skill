@@ -15,7 +15,7 @@ It is designed for text that feels too polished, vague, repetitive, promotional,
 The skill's pattern catalog is not folk wisdom. It draws on two sources, in this order:
 
 1. **[Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)** — a community-maintained Wikipedia essay cataloguing recurring tells in AI-generated prose (em dashes used as formulaic emphasis, the compulsive rule of three, "not only X but also Y" symmetry, boosterish language, and more). The original twelve categories in the audit below cover much of the same ground and predate this citation being added to the repo; read this as the closest public reference for that catalog, not as a claim about which one the other was built from.
-2. **[StoryScope (Russell et al., arXiv:2604.03136)](https://arxiv.org/abs/2604.03136)** — a 2026 study that induces 304 narrative features (plot, tone, figurative language, and seven other dimensions) from ~61,600 parallel human- and LLM-written stories and finds those features alone — no raw text access — separate human from AI writing at 93.2% macro-F1. Four of the paper's findings that plausibly transfer from fiction to ordinary prose became categories 13–16: metaphor saturation, missing real-world anchors, over-unified arguments, and unrelieved earnestness. Two findings from the same paper's released data explicitly did **not** become detectors — raw em-dash *frequency* barely separates AI from human text (this is a different claim than source 1's "used in a formulaic way" - a construction can be a recognizable tell without occurring more often overall, which is why this project's own em-dash detector, in category 2, targets one specific construction rather than counting dashes) — and neither does sentence length (sentence fragments actually run the opposite direction from folk wisdom). `tools/patterns.py` documents why, so the omission does not get quietly reintroduced later. See [`evals/README.md`](evals/README.md) for how this project verified the paper's numbers and where its own regex proxies for these four categories still fall short.
+2. **[StoryScope (Russell et al., arXiv:2604.03136)](https://arxiv.org/abs/2604.03136)** — a 2026 study that induces 304 narrative features across ten dimensions (plot, style, agents, and seven others - style, covering tone and figurative language among other things, is the single highest-separating dimension on average) from ~61,600 parallel human- and LLM-written stories and finds those features alone — no raw text access — separate human from AI writing at 93.2% macro-F1. Four of the paper's findings that plausibly transfer from fiction to ordinary prose became categories 13–16: metaphor saturation, missing real-world anchors, over-unified arguments, and unrelieved earnestness. Two findings from the same paper's released data explicitly did **not** become detectors — raw em-dash *frequency* barely separates AI from human text (this is a different claim than source 1's "used in a formulaic way" - a construction can be a recognizable tell without occurring more often overall, which is why this project's own em-dash detector, in category 2, targets one specific construction rather than counting dashes) — and neither does sentence length (sentence fragments actually run the opposite direction from folk wisdom). `tools/patterns.py` documents why, so the omission does not get quietly reintroduced later. See [`evals/README.md`](evals/README.md) for how this project verified the paper's numbers and where its own regex proxies for these four categories still fall short.
 
 ## What it improves
 
@@ -120,20 +120,22 @@ attributable to the skill rather than to prompting in general.
   skill will not fix that by itself.
 - **Two detectors are essentially inert on this corpus, two more barely
   fired.** "Forced synonym variation" (one of the original twelve) and
-  "Metaphor saturation" and "Missing real-world anchors" (two of the four
-  StoryScope-derived categories, 13-16, see Sources above) scored 0 in every
-  column across all 90 revisions. "Over-unified argument" and "Unrelieved
-  earnestness" scored at most 0.10 - real but negligible. Read that as a
-  narrow regex, not a genre mismatch: a review pass wrote adversarial
-  paraphrases of these four categories' own worked examples in `SKILL.md`
-  and most triggered nothing, alongside a few genuinely fine sentences that
-  falsely did. The `SKILL.md` guidance for all four is sound; their
-  automated detectors are not yet validated the way the original twelve
-  are. [`evals/README.md`](evals/README.md) has the full breakdown,
-  including a like-for-like comparison showing the measured improvement
-  actually comes entirely from strengthened guidance on *existing*
-  categories, not from these four, plus a demonstrated case of exactly how
-  noisy a small subset of this eval can get between runs.
+  two of the four StoryScope-derived categories (13-16, see Sources above -
+  "Metaphor saturation" and "Missing real-world anchors") scored 0 in every
+  column across all 90 revisions. The other two ("Over-unified argument" and
+  "Unrelieved earnestness") scored at most 0.10 - real but negligible. Read
+  that as a narrow regex, not a genre mismatch: a review pass wrote
+  adversarial paraphrases of categories 13-16's own worked examples in
+  `SKILL.md` and most triggered nothing, alongside a few genuinely fine
+  sentences that falsely did. The `SKILL.md` guidance for all four is
+  sound; their automated detectors are not yet validated the way the
+  original twelve are. [`evals/README.md`](evals/README.md) has the full
+  breakdown, including a like-for-like comparison showing the measured
+  *score* improvement comes from strengthened guidance on *existing*
+  categories, not from these four (which is the most this eval can claim -
+  it cannot separate a category's own score from any knock-on effect its
+  guidance has on other categories), plus a demonstrated case of exactly
+  how noisy a small subset of this eval can get between runs.
 - **The harness is not a clean model.** Everything runs through the Claude Code
   CLI, which adds a system prompt of its own to all three arms. They are
   compared under identical conditions, but none of them is a raw model.

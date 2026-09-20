@@ -17,10 +17,14 @@ stories; those features (no raw text access) separate human from AI writing
 at 93.2% macro-F1. The paper is about long-form fiction; these four are the
 subset of its findings that plausibly transfer to expository prose, each
 backed by a total variation distance (TVD) of 0.16-0.48 between the AI and
-human value distributions for its underlying feature(s) - see the "Evidence"
-line under each category in SKILL.md for the specific feature and number, and
-evals/README.md for how this project checked the paper's numbers against its
-own released data (the PDF itself was unreachable when this was written).
+human value distributions for its underlying feature(s), independently
+re-derived from the paper's own released feature data (its PDF was
+unreachable when this was written) rather than trusted from a summary. See
+the "Evidence" line under each category in SKILL.md for the percentages -
+not every line states its TVD explicitly (a couple of the underlying
+features are multi-select, where "TVD" admits more than one reasonable
+definition, so the percentages are cited alone rather than picking one) -
+and evals/README.md for how the re-derivation was checked.
 
 All four are whole-document semantic judgments in the paper (does one conceit
 structure the whole piece? is every example serving the same thesis?). The
@@ -180,13 +184,14 @@ EN_LEXICAL: dict[str, list[str]] = {
         r"\bless\s+(?:about|of)\b[^.!?\n]{0,60}?\bmore\s+(?:about|of)\b",
         # NOT included: a "where the old X did A, the new X does B" pattern
         # (a real construction - "where our old system asked users to adapt,
-        # our new system adapts to the user" - found once in this project's
-        # own eval corpus). Removed after an adversarial review pass found it
-        # false-positives just as readily on a plain factual comparison
-        # ("where the old boiler burned oil, the new boiler burns gas"), and
-        # this category has no floor, so a single ordinary sentence like that
-        # would score it. It contributed two hits total across ~100 real
-        # documents in testing - not enough value to justify the risk.
+        # our new system adapts to the user" - one instance in this project's
+        # eval draft corpus, plus one echo of it in a revision, two hits total
+        # across ~100 real documents in testing). Removed after an
+        # adversarial review pass found it false-positives just as readily on
+        # a plain factual comparison ("where the old boiler burned oil, the
+        # new boiler burns gas"), and this category has no floor, so a single
+        # ordinary sentence like that would score it - not enough real value
+        # to justify the risk.
     ],
     "rule_of_three": [
         # Three short comma-separated items, Oxford comma optional.
@@ -304,9 +309,24 @@ EN_LEXICAL: dict[str, list[str]] = {
         # Distinct from vague_attribution: this fires on entity-naming
         # avoidance in illustrations and asides that assert nothing, not on
         # unsourced claims.
+        #
+        # The four lookbehinds guard against the category's own worst failure
+        # mode: "Kubernetes is a popular platform" names Kubernetes right
+        # there, but without the guard the adjective+noun pattern fires on "a
+        # popular platform" regardless of what precedes it. Excluding an
+        # immediately preceding is/was/are/were rules out exactly the
+        # "NAMED_THING is a popular X" predicate-nominal construction (the
+        # common case where the sentence already did name something) while
+        # still catching the phrase as a subject ("A popular streaming
+        # service ran into trouble") or object ("we picked a popular
+        # platform") - an adversarial review pass found the un-guarded
+        # version scoring 2/2, the category's maximum, on a sentence that
+        # named two real products.
+        r"(?i)(?<!\bis\s)(?<!\bwas\s)(?<!\bare\s)(?<!\bwere\s)"
         r"\ba\s+(?:popular|leading|major|well[- ]known|certain|large|prominent|renowned)\s+"
         r"(?:streaming\s+service|company|provider|platform|framework|brand|book|author|"
         r"study|report|organization|firm|app|tool|publication)\b",
+        r"(?i)(?<!\bis\s)(?<!\bwas\s)(?<!\bare\s)(?<!\bwere\s)"
         r"\bone\s+(?:leading|major|well[- ]known|popular)\s+"
         r"(?:company|provider|platform|framework|brand|tool|app)\b",
         r"\bsome\s+companies\s+have\s+(?:begun|started)\s+(?:to\s+)?experiment",
@@ -314,7 +334,12 @@ EN_LEXICAL: dict[str, list[str]] = {
         # NOT included: a separate "a major provider had an outage" pattern -
         # it fully overlapped the adjective+noun pattern above on the common
         # case ("a major provider") and double-counted a single sentence as
-        # two hits. The adjective+noun pattern above still catches it.
+        # two hits. The adjective+noun pattern above still catches that
+        # exact case, but not every variant - "a major cloud provider had an
+        # outage" no longer scores at all, since "cloud" breaks the
+        # adjective+noun adjacency the surviving pattern requires. Recall was
+        # already known to be narrow (see evals/README.md); this is one more
+        # instance of it, not a new kind of gap.
     ],
     "over_unified_argument": [
         # Explicit cross-item unification language: every example, thread, or

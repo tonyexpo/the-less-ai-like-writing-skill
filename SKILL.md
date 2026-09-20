@@ -20,7 +20,7 @@ Use this skill when the user asks for writing that should feel:
 - less templated
 - more direct, concrete, or idiomatic
 
-Do not claim that the resulting text will defeat AI detectors. Detection systems are unreliable and no stylistic process can guarantee a classification outcome. This is not a hedge: a 2026 study of AI-generated fiction (StoryScope, arXiv:2604.03136) found that its 304 narrative features — covering plot structure, tone, figurative language, and eight other dimensions, with no access to raw text at all — separate human from AI writing at 93.2% macro-F1. Reducing generic phrasing changes some of what those features measure; it does not change all of it, and it is not a way to hide what wrote a piece.
+Do not claim that the resulting text will defeat AI detectors. Detection systems are unreliable and no stylistic process can guarantee a classification outcome. This is not a hedge: a 2026 study of AI-generated fiction (StoryScope, arXiv:2604.03136) found that its 304 narrative features — across ten dimensions including plot and style, with no access to raw text at all — separate human from AI writing at 93.2% macro-F1. Reducing generic phrasing changes some of what those features measure; it does not change all of it, and it is not a way to hide what wrote a piece.
 
 ---
 
@@ -263,11 +263,15 @@ For short prose, paragraphs are often better than a miniature report.
 ---
 
 The four patterns below come from StoryScope (Russell et al., arXiv:2604.03136),
-a study of ~61,600 parallel human and LLM stories that finds AI fiction
-separable from human fiction mainly by narrative architecture. The study is
-about long-form fiction, not blog posts or memos, so each pattern here is the
-subset of its finding that plausibly transfers to ordinary prose, restated as
-prose advice rather than as the paper's own narrative-specific language. All
+a study of ~61,600 parallel human and LLM stories that induces 304 features
+across ten dimensions (plot, style, agents, and seven others) and finds them,
+together, separable from human writing at 93.2% macro-F1. Style is in fact
+the single highest-separating dimension on average and supplies 11 of the 20
+strongest individual features - the strongest of them (category 13's, below)
+is second-strongest overall. The study is about long-form fiction, not blog
+posts or memos, so each pattern here is the subset of its findings that
+plausibly transfers to ordinary prose, restated as prose advice rather than
+as the paper's own narrative-specific language. All
 four are whole-document judgments — call them by reading the piece, not by
 scanning for a keyword.
 
@@ -317,8 +321,8 @@ and the reader cannot check them. If the specific isn't known, say so plainly
 ("I don't know which one") rather than reaching for a vague placeholder.
 
 Evidence: reference to a specific, nameable brand or cultural touchstone
-appeared in 40% of human-written passages versus 13% of AI-written ones
-(TVD 0.32) — one of the larger human-leaning gaps StoryScope measured.
+appeared in 40% of human-written passages versus 13% of AI-written ones —
+a 27-point gap, one of the larger human-leaning ones StoryScope measured.
 
 ---
 

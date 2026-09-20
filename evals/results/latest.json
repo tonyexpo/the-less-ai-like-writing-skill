@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-09-20T12:31:16Z",
+    "generated_at": "2026-09-20T12:54:02Z",
     "model": "sonnet",
     "repeats": 3,
     "arms": [
@@ -9,10 +9,10 @@
       "skill"
     ],
     "draft_count": 10,
-    "skill_sha256": "b6ce63a73b1fec99",
+    "skill_sha256": "3a62b1fc804a2938",
     "scorer_max": 32,
     "harness": "claude-code-cli",
-    "note": "Rebuilt by evals/rescore.py from raw text already on disk - no new model calls. Some or all arms may have been generated under an earlier SKILL.md; see this run's stderr output (not preserved here) for any drift warning that was printed."
+    "note": "Rebuilt by evals/rescore.py from raw text already on disk - no new model calls. No SKILL.md drift detected between the skill-arm raw text and the SKILL.md committed alongside this file."
   },
   "summary": {
     "runs_ok": 90,

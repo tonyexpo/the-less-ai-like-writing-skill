@@ -297,3 +297,20 @@ def test_short_fragments_alone_are_not_penalised():
     the scorer must not reward choppiness as if it were."""
     text = "Shipped Tuesday. Broke Wednesday. Fixed by lunch. Nobody was happy about it."
     assert score_text(text).total == 0
+
+
+def test_missing_anchors_does_not_fire_when_the_thing_is_actually_named():
+    """missing_anchors exists to catch vague placeholders standing in for a
+    name the author knows. A round of adversarial review found the un-guarded
+    version scoring 2/2 - the category's maximum - on a sentence that named
+    two real products, because the adjective+noun pattern didn't check
+    whether a name preceded it. This is the regression test for that fix."""
+    named = "Kubernetes is a popular platform for container orchestration, and Docker is a well-known tool."
+    assert score_text(named).count_of("missing_anchors") == 0
+    also_named = "React is a popular framework; we picked it because the team already knew it."
+    assert score_text(also_named).count_of("missing_anchors") == 0
+    # The guard must not swallow the genuinely vague cases it's meant to keep.
+    still_vague = "A popular streaming service ran into trouble last year."
+    assert score_text(still_vague).count_of("missing_anchors") > 0
+    also_vague = "We picked a popular platform after evaluating three vendors."
+    assert score_text(also_vague).count_of("missing_anchors") > 0
