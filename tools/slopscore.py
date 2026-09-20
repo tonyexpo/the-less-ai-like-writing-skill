@@ -55,10 +55,16 @@ FREQUENT_RATE = 1.0
 # without reaching the rate threshold on a small denominator.
 FREQUENT_COUNT = 4
 
-# Absolute point cutoffs, not proportions of the max: the same total means the
-# same thing (e.g. 16+ is "at least half the sixteen categories are firing
-# frequently, or all of them occasionally") regardless of how many categories
-# exist. 16 is exactly half of the current 32-point max.
+# These scale with the category count (they were 5/11/24 when there were
+# twelve categories, rescaled here to roughly the same proportions of the new
+# 32-point max and then rounded to a clean fraction: 16 is exactly half). That
+# is a deliberate choice, not an accident - the alternative, holding the raw
+# point cutoffs fixed while the max grows, would mean "12+" quietly gets
+# easier to hit as new categories are added, which defeats the point of
+# having bands at all. If a category is ever added or removed, rescale these
+# by hand and update the "Interpretation" prose in SKILL.md's AI-Likeness
+# Audit section to match - tests/test_skill_contract.py checks the two stay
+# in sync, but only for whatever numbers are written here.
 BANDS = ((7, "low"), (15, "revise"), (32, "rewrite"))
 
 _FENCE_RE = re.compile(r"^```.*?^```", re.MULTILINE | re.DOTALL)

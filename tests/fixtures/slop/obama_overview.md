@@ -26,7 +26,7 @@ Obama's presidency was not just a political milestone, but a cultural one. It is
 
 ## Reflection
 
-Few experiences teach you more about resilience than rising from a state legislature to the presidency in four years. If his early career was a sketch, the presidency is the underpainting, each term pressing down on the one before it. The presidency itself is a kind of crucible, and few emerge from it unchanged. A well-known book on leadership once observed that the office reveals character, and Obama's arc bore that out at every turn.
+Few experiences teach you more about resilience than rising from a state legislature to the presidency in four years. If his early career was a sketch, the presidency is the underpainting, each term pressing down on the one before it. His public standing eroded, then cracked, then gave way to something sturdier once the crisis passed. A well-known book on leadership once observed that the office reveals character, and Obama's arc bore that out at every turn.
 
 Each of these threads — the organizer, the senator, the president, the elder statesman — points back to the same underlying question: what does it mean to lead thoughtfully in a divided country? Taken together, the picture is clear. If this presidency taught the country anything, it's that division isn't the enemy of progress.
 

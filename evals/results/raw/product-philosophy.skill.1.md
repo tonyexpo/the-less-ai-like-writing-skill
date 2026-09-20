@@ -1,21 +1,23 @@
-The Great Rebuild: Why We Started Over
+Why We Rebuilt Our Product From the Ground Up
 
-Our engineering team could have kept patching the product we had. Instead we tore it down and rebuilt it from the ground up.
+Rather than patch and polish what we had, our engineering team decided to rebuild our product from scratch.
 
 ## Listening First
 
-Before writing any code, we spent months talking to customers, partners, and people inside the company. The message was consistent: nobody wanted another incremental update. They wanted something built for where they were headed, not for where the product had already been.
+We spent months gathering feedback from customers, partners, and internal stakeholders. It wasn't just data collection — we wanted to understand the reasoning behind every feature request. What we heard was consistent: people didn't want incremental changes. They wanted a foundation built for where things were going, not where they'd been.
 
 ## Three Principles
 
-We built the new architecture around three ideas. Simplicity, so complexity doesn't get between people and the thing they're trying to do. Scalability, so the system holds up as usage grows rather than just today. Sustainability, so the engineering choices we make now don't become next year's technical debt. The old system made users adapt to it. This one is built to adapt to them.
+The new architecture rests on three principles: simplicity, scalability, and sustainability. Simplicity means complexity doesn't get in the way of the experience. Scalability means building for growth, not just today's load. Sustainability means engineering practices that hold up over time. The old system asked users to adapt to it. This one adapts to them.
 
-## Starting Over on Purpose
+## Building With Intention
 
-We could have bolted more features onto the old foundation. We didn't, because a full rebuild let us question decisions we'd stopped noticing — the workarounds and shortcuts that had quietly become "how things work." Questioning them was slower than shipping around them, but it's why the result holds together instead of just doing more.
+We could have kept adding features on top of an aging foundation. Instead we took the harder path: starting over meant we could question old assumptions and legacy decisions instead of working around them. The result does more, but it also runs faster and feels more coherent.
 
-## Built Across Teams
+## A Cross-Functional Effort
 
-No single team owns this. Engineers, designers, and product strategists worked from the same plan instead of handing work off between silos, and that coordination shows up in the product as much as any individual decision does.
+Engineers, designers, and product strategists worked on this together, and that collaboration mattered as much as the code itself. Where silos used to slow things down, this project moved because people were talking to each other.
 
-This rebuild changes what we can build next, and that's the part we're most glad to have behind us.
+## What's Next
+
+This rebuild is a new foundation, not a finished product. We're looking forward to building on it with the people who use it.

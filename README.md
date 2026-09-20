@@ -14,8 +14,8 @@ It is designed for text that feels too polished, vague, repetitive, promotional,
 
 The skill's pattern catalog is not folk wisdom. It draws on two sources, in this order:
 
-1. **[Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)** — the English Wikipedia community's own essay cataloguing recurring tells in AI-generated prose (em dashes used as formulaic emphasis, the compulsive rule of three, "not only X but also Y" symmetry, boosterish language, and more), compiled from thousands of real edits its editors have reviewed. The original twelve categories in the audit below are this project's attempt to turn that essay into something a test suite can check.
-2. **[StoryScope (Russell et al., arXiv:2604.03136)](https://arxiv.org/abs/2604.03136)** — a 2026 study that induces 304 narrative features from ~61,600 parallel human- and LLM-written stories and finds AI fiction separable from human fiction mainly by narrative architecture (93.2% macro-F1 from structure alone, no surface style). Four of that paper's findings that plausibly transfer from fiction to ordinary prose became categories 13–16: metaphor saturation, missing real-world anchors, over-unified arguments, and unrelieved earnestness. Two findings from the same paper explicitly did **not** become detectors — raw em-dash frequency and sentence length barely separate AI from human text in its data (and sentence fragments actually run the opposite direction from folk wisdom) — and `tools/patterns.py` documents why, so the omission does not get quietly reintroduced later.
+1. **[Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)** — a community-maintained Wikipedia essay cataloguing recurring tells in AI-generated prose (em dashes used as formulaic emphasis, the compulsive rule of three, "not only X but also Y" symmetry, boosterish language, and more). The original twelve categories in the audit below cover much of the same ground and predate this citation being added to the repo; read this as the closest public reference for that catalog, not as a claim about which one the other was built from.
+2. **[StoryScope (Russell et al., arXiv:2604.03136)](https://arxiv.org/abs/2604.03136)** — a 2026 study that induces 304 narrative features (plot, tone, figurative language, and seven other dimensions) from ~61,600 parallel human- and LLM-written stories and finds those features alone — no raw text access — separate human from AI writing at 93.2% macro-F1. Four of the paper's findings that plausibly transfer from fiction to ordinary prose became categories 13–16: metaphor saturation, missing real-world anchors, over-unified arguments, and unrelieved earnestness. Two findings from the same paper's released data explicitly did **not** become detectors — raw em-dash *frequency* barely separates AI from human text (this is a different claim than source 1's "used in a formulaic way" - a construction can be a recognizable tell without occurring more often overall, which is why this project's own em-dash detector, in category 2, targets one specific construction rather than counting dashes) — and neither does sentence length (sentence fragments actually run the opposite direction from folk wisdom). `tools/patterns.py` documents why, so the omission does not get quietly reintroduced later. See [`evals/README.md`](evals/README.md) for how this project verified the paper's numbers and where its own regex proxies for these four categories still fall short.
 
 ## What it improves
 
@@ -87,15 +87,15 @@ a third arm gets a short paragraph of ordinary copy-editing advice instead.
 
 | condition | slopscore | hits per 100 words |
 | --- | ---: | ---: |
-| the original drafts | 11.70 | 6.48 |
+| the original drafts | 11.60 | 6.46 |
 | revised, no guidance | 9.43 | 5.82 |
-| revised, generic writing advice | 9.13 | 6.06 |
-| **revised with this skill** | **4.97** | **3.76** |
+| revised, generic writing advice | 9.10 | 6.05 |
+| **revised with this skill** | **5.10** | **3.99** |
 
-Generic advice removes almost nothing (11.70 to 9.13). The skill removes about
-five times as much, and the gap between the two — 4.16 points of score, 2.30
-hits per 100 words — is the part attributable to the skill rather than to
-prompting in general.
+Generic advice removes almost nothing (11.60 to 9.10, 2.50 points). The skill
+removes about two and a half times as much (6.50 points), and the gap between
+the two — 4.00 points of score, 2.06 hits per 100 words — is the part
+attributable to the skill rather than to prompting in general.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/slopscore-by-draft-dark.svg">
@@ -109,26 +109,31 @@ prompting in general.
 
 ### Read the numbers with these caveats
 
-- **Part of the gain is length.** The skill's revisions are shorter (254 words
+- **Part of the gain is length.** The skill's revisions are shorter (249 words
   against 332 unguided), and shorter text trips fewer patterns outright. Cutting
   padding is one of the skill's stated goals, so this is not cheating, but it
-  does mean the honest margin over generic advice is 4.16 points of score and
-  2.30 hits per 100 words - the smaller number is the length-adjusted one.
+  does mean the honest margin over generic advice is 4.00 points of score and
+  2.06 hits per 100 words - the smaller number is the length-adjusted one.
 - **Structure survives every arm.** "Excessive headings or bullets" barely moves
-  (2.00 to 1.60): asked to revise, the model rewrites sentences and leaves the
+  (2.00 to 1.63): asked to revise, the model rewrites sentences and leaves the
   scaffolding alone more than it should. If a draft is over-structured, the
   skill will not fix that by itself.
-- **Two detectors are inert on this corpus.** "Forced synonym variation" and
-  "Metaphor saturation" scored 0 everywhere across all 90 revisions.
-  "Missing real-world anchors" and "Over-unified argument" scored at most
-  0.10. These four are narrow lexical proxies for whole-document judgments
-  from a 2026 fiction study (see Sources, above) and are validated at the
-  unit-test level, but this particular eval corpus - mostly explainer,
-  marketing, and technical genres - is not the right stimulus to exercise
-  them at scale. Treat those four rows as unmeasured here, not as evidence
-  the patterns don't occur; [`evals/README.md`](evals/README.md) has the
-  detail, including the one case where a frozen draft *did* trip two of
-  them before revision washed the signal back out.
+- **Two detectors are essentially inert on this corpus, two more barely
+  fired.** "Forced synonym variation" (one of the original twelve) and
+  "Metaphor saturation" and "Missing real-world anchors" (two of the four
+  StoryScope-derived categories, 13-16, see Sources above) scored 0 in every
+  column across all 90 revisions. "Over-unified argument" and "Unrelieved
+  earnestness" scored at most 0.10 - real but negligible. Read that as a
+  narrow regex, not a genre mismatch: a review pass wrote adversarial
+  paraphrases of these four categories' own worked examples in `SKILL.md`
+  and most triggered nothing, alongside a few genuinely fine sentences that
+  falsely did. The `SKILL.md` guidance for all four is sound; their
+  automated detectors are not yet validated the way the original twelve
+  are. [`evals/README.md`](evals/README.md) has the full breakdown,
+  including a like-for-like comparison showing the measured improvement
+  actually comes entirely from strengthened guidance on *existing*
+  categories, not from these four, plus a demonstrated case of exactly how
+  noisy a small subset of this eval can get between runs.
 - **The harness is not a clean model.** Everything runs through the Claude Code
   CLI, which adds a system prompt of its own to all three arms. They are
   compared under identical conditions, but none of them is a raw model.

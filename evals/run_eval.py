@@ -10,7 +10,7 @@ only thing that changes is what the system prompt carries:
 
 The ``generic`` arm is the one that makes the result mean anything. Without it
 the benchmark cannot tell the skill apart from the general effect of pasting
-some style guidance into the prompt, and a 12 KB instruction beating an empty
+some style guidance into the prompt, and a long instruction beating an empty
 one is not a finding.
 
 Read evals/README.md before quoting any number from this: the harness runs

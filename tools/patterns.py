@@ -13,24 +13,31 @@ or Spanish pack can be added without touching the scoring code, but nothing but
 ``metaphor_saturation``, ``missing_anchors``, ``over_unified_argument`` and
 ``unrelieved_earnestness`` come from StoryScope (Russell et al., arXiv:2604.03136),
 a study that induces 304 narrative features from ~61,600 parallel human/LLM
-stories and finds AI fiction separable from human fiction by narrative
-*architecture* rather than surface style (93.2% macro-F1 on structure alone).
-The paper is about long-form fiction; these four are the subset of its
-findings that plausibly transfer to expository prose, each backed by a total
-variation distance (TVD) of 0.26-0.48 between the AI and human value
-distributions for its underlying feature(s) — see evals/README.md for the
-per-feature numbers and how they were checked.
+stories; those features (no raw text access) separate human from AI writing
+at 93.2% macro-F1. The paper is about long-form fiction; these four are the
+subset of its findings that plausibly transfer to expository prose, each
+backed by a total variation distance (TVD) of 0.16-0.48 between the AI and
+human value distributions for its underlying feature(s) - see the "Evidence"
+line under each category in SKILL.md for the specific feature and number, and
+evals/README.md for how this project checked the paper's numbers against its
+own released data (the PDF itself was unreachable when this was written).
 
 All four are whole-document semantic judgments in the paper (does one conceit
 structure the whole piece? is every example serving the same thesis?). The
-regexes below are narrow, low-recall lexical proxies for a small set of common
-surface tells, not a reimplementation of the paper's LLM-judged features — a
-text can legitimately exhibit the underlying pattern without tripping any
-regex here. Two things the paper explicitly found do NOT separate AI from
-human text are deliberately absent from every table: raw em-dash/parenthetical
-frequency (TVD 0.03) and sentence length (TVD 0.03-0.08, and sentence
-fragments actually run more common in AI text, 85% vs 67%, the opposite of the
-folk assumption). Do not add either as a detector without new evidence.
+regexes below are narrow lexical proxies for a small set of common surface
+tells, calibrated against real generated text rather than reimplementing the
+paper's LLM-judged features. Read that plainly: a text can exhibit the
+underlying pattern strongly and trip none of these regexes, and a paraphrase
+of one of SKILL.md's own worked examples frequently does exactly that. They
+are validated as detector *mechanics* (tests/test_detectors.py) and as a
+description of real slop this project observed, not as reliable measures of
+how often the pattern occurs in the wild - see evals/README.md for what that
+means for the eval numbers. Two things this project's re-derivation of the
+paper's data explicitly found do NOT separate AI from human text are
+deliberately absent from every table: raw em-dash/parenthetical frequency
+(TVD 0.03) and sentence length (TVD 0.03-0.08, and sentence fragments
+actually run more common in AI text, 85% vs 67%, the opposite of the folk
+assumption). Do not add either as a detector without new evidence.
 """
 
 from __future__ import annotations
@@ -171,9 +178,15 @@ EN_LEXICAL: dict[str, list[str]] = {
         r"\bit'?s\s+not\s+(?:about|that)\b[^.!?\n]{0,60}?\bit'?s\b",
         r"\bmore\s+than\s+(?:just|simply)\b",
         r"\bless\s+(?:about|of)\b[^.!?\n]{0,60}?\bmore\s+(?:about|of)\b",
-        # "Where the old X did A, the new X does B" - a parallel before/after
-        # reversal, distinct from the other contrast shapes above.
-        r"\bwhere\s+(?:our|the)\s+old\s+\w+[^.!?\n]{0,60}?,\s+(?:our|the)\s+new\s+\w+\b",
+        # NOT included: a "where the old X did A, the new X does B" pattern
+        # (a real construction - "where our old system asked users to adapt,
+        # our new system adapts to the user" - found once in this project's
+        # own eval corpus). Removed after an adversarial review pass found it
+        # false-positives just as readily on a plain factual comparison
+        # ("where the old boiler burned oil, the new boiler burns gas"), and
+        # this category has no floor, so a single ordinary sentence like that
+        # would score it. It contributed two hits total across ~100 real
+        # documents in testing - not enough value to justify the risk.
     ],
     "rule_of_three": [
         # Three short comma-separated items, Oxford comma optional.
@@ -273,13 +286,18 @@ EN_LEXICAL: dict[str, list[str]] = {
         # tell, deliberately narrow to avoid flagging one incidental idiom.
         r"\bif\s+(?:the\s+)?\w+(?:\s+\w+){0,4}\s+was\s+an?\s+\w+,\s+"
         r"(?:this|it|the\s+\w+)(?:\s+\w+)?\s+is\s+(?:the|an?)\b",
-        r"\bis\s+an?\s+kind\s+of\b",
-        r"\bthink\s+of\s+\w+(?:\s+\w+){0,3}\s+as\s+an?\b",
         # A three-step figurative escalation ("eroded, then cracked, then gave
         # way") — the gradual-collapse conceit the paper's examples lean on.
         r"\b\w+ed,\s+then\s+\w+ed,\s+then\s+(?:\w+\s+)?\w+\b",
         r"\bis\s+the\s+\w+\s+(?:you|we|they)\s+pay\s+(?:on|for)\b",
         r"\b(?:a|the)\s+(?:kind|sort)\s+of\s+\w+\s+that\s+(?:presses?|weighs?|sits?)\b",
+        # NOT included, on purpose: a bare "is a kind of" or "think of X as Y".
+        # Both are ordinary definitional/explanatory devices - "a raccoon is a
+        # kind of procyonid", "think of the cache as a dictionary" - not a
+        # reached-for figure. An adversarial review pass found both false-
+        # positiving on legitimate taxonomic and explanatory prose; removed
+        # rather than narrowed, since no simple qualifier reliably tells the
+        # two apart. See evals/README.md's "How narrow, concretely" section.
     ],
     "missing_anchors": [
         # A generic placeholder standing in for a thing that has a real name.
@@ -292,8 +310,11 @@ EN_LEXICAL: dict[str, list[str]] = {
         r"\bone\s+(?:leading|major|well[- ]known|popular)\s+"
         r"(?:company|provider|platform|framework|brand|tool|app)\b",
         r"\bsome\s+companies\s+have\s+(?:begun|started)\s+(?:to\s+)?experiment",
-        r"\ba\s+major\s+(?:cloud\s+)?provider\s+had\s+an?\s+outage\b",
         r"\bstudies\s+in\s+recent\s+years\s+have\s+shown\b",
+        # NOT included: a separate "a major provider had an outage" pattern -
+        # it fully overlapped the adjective+noun pattern above on the common
+        # case ("a major provider") and double-counted a single sentence as
+        # two hits. The adjective+noun pattern above still catches it.
     ],
     "over_unified_argument": [
         # Explicit cross-item unification language: every example, thread, or
@@ -321,12 +342,17 @@ EN_LEXICAL: dict[str, list[str]] = {
         r"\b(?:challenging|difficult)\s+(?:but|yet)\s+(?:ultimately\s+)?rewarding\b",
         r"\bembrac(?:e|ed|ing)\s+(?:the\s+)?complexity\s+rather\s+than\s+shy",
         r"\bthe\s+(?:results|numbers|outcome)\s+speak\s+for\s+themselves\b",
-        r"\brequired\s+(?:great\s+)?(?:patience|perseverance|resilience|dedication)\b",
         r"\bwas\s+not\s+without\s+its\s+(?:challenges|difficulties)\b",
         r"\ba\s+labor\s+of\s+love\b",
         r"\ba\s+deep\s+sense\s+of\s+gratitude\b",
         r"\bfew\s+experiences\s+teach\s+you\s+(?:more\s+)?about\b",
         r"\bthat\s+(?:tension|struggle|friction),?\s+i'?ve\s+come\s+to\s+believe,?\s+is\s+where\b",
+        # NOT included, on purpose: a bare "required (great) patience/
+        # perseverance/resilience/dedication". That phrase is satisfied by
+        # ordinary factual difficulty reports ("required great patience
+        # because the clips are brittle") as often as by performed
+        # solemnity, and contributed zero real hits across the eval corpus
+        # when it was tried - removed rather than kept as dead weight.
     ],
 }
 

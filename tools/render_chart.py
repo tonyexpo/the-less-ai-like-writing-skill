@@ -159,7 +159,10 @@ def by_draft_chart(data: dict, theme: dict) -> str:
     rows = [Row(label=draft_id, sublabel="", values=entry) for draft_id, entry in summary["by_draft"].items()]
     rows.sort(key=lambda r: -r.values.get("draft", 0))
     # meta["scorer_max"] is 2 * the category count at the time the eval ran, so
-    # the axis tracks the scorer even as categories are added or removed.
+    # the axis tracks the scorer even as categories are added or removed. The
+    # `24` fallback is only for results files saved before this field existed,
+    # back when the scorer had twelve categories; every results file since
+    # carries scorer_max explicitly and should never hit the fallback.
     scorer_max = meta.get("scorer_max", 24)
     category_count = scorer_max // 2
     return _chart(

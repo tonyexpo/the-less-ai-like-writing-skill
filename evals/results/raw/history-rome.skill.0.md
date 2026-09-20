@@ -1,21 +1,13 @@
 # The Legacy of Rome: What Institutional Decline Actually Looks Like
 
-The Western Roman Empire didn't fall in a single moment. Its decline in the 5th century CE unfolded over decades, through economic strain, political fragmentation, and pressure from beyond its borders — three forces that arrived together rather than in sequence.
+Organizations obsess over disruption, so it's worth revisiting an older case: the decline of the Western Roman Empire in the 5th century CE. Rome didn't fall to any single blow. It accumulated pressure until it couldn't hold.
 
-## Economic Strain
+Start with the economy. Trade networks that had held together for centuries came under strain, and the currency itself was debased — coins carrying less silver than their face value implied. Systems that look permanent can still depend on assumptions nobody's tracking anymore.
 
-Rome's economy weakened in its final centuries. Historians point to strained trade networks and currency debasement as contributing factors. Systems that had held for generations came under pressure as the assumptions beneath them shifted.
+Politics fragmented alongside the economy. Leadership turned over frequently, and authority split across competing centers rather than resting in one place. This wasn't a coup or a single failed emperor. It was a slower loss of alignment, the kind that's hard to name while it's happening and obvious once it's done.
 
-## Political Fragmentation
+At the same time, groups beyond Rome's traditional borders were reshaping the map around it — through invasion, migration, or some mix historians still argue about. Whatever the right label, the empire wasn't deciding its own fate in isolation. What happened inside Rome and what happened at its edges were the same story, told from two directions.
 
-Leadership turned over frequently in this period, and authority split across competing centers rather than resting in one place. This wasn't a single dramatic failure — it was a slower loss of alignment among the people meant to be running the same institution.
+None of these three things caused the fall on its own. Economic strain, political drift, and outside pressure arrived together, and each made the others harder to manage. Looking for the one cause is tempting and probably the wrong instinct — decline like this tends to be several problems reinforcing each other rather than one problem finally landing.
 
-## External Pressure
-
-At the same time, groups beyond Rome's traditional borders were reshaping the region — through invasion, migration, or some mix of both, depending on which historian you ask. Rome's internal condition and what was happening around it were never really separate problems.
-
-## Three Forces, Not One Cause
-
-Economic strain, political drift, and outside pressure all landed in the same period. It's tempting to name a single cause for Rome's fall, but the more accurate account is that no one factor did it alone — the combination did.
-
-What made these pressures fatal wasn't their individual severity but their timing. An institution that could absorb any one of them on its own faced all three at once, with fewer resources and less internal agreement each year to meet them.
+What does that leave for anyone running an institution today? Maybe just this: staying intact isn't about avoiding pressure, since pressure is constant. It's about whether the system has anything left to absorb it when several pressures show up in the same year.

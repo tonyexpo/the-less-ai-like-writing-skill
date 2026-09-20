@@ -36,7 +36,8 @@ CASES: list[tuple[str, str, str]] = [
     ),
     (
         "rule_of_three",
-        "It improves speed, reliability, and flexibility for every team.",
+        "It improves speed, reliability, and flexibility for every team. "
+        "The rollout was fast, safe, and reversible.",
         "It improves speed and reliability.",
     ),
     (
@@ -75,7 +76,7 @@ CASES: list[tuple[str, str, str]] = [
     (
         "metaphor_saturation",
         "If the first version was a sketch, this one is the underpainting. "
-        "The old system is a kind of scaffolding we never fully removed.",
+        "Confidence in the old system eroded, then cracked, then gave way entirely.",
         "The rollout felt like pulling teeth, but the queue backs up once "
         "the worker pool saturates, which is a known limit of the design.",
     ),
@@ -119,6 +120,24 @@ STRUCTURAL_CASES: list[tuple[str, str, str]] = [
 @pytest.mark.parametrize("category,positive,negative", CASES + STRUCTURAL_CASES, ids=lambda v: None)
 def test_detector_fires_on_positive(category, positive, negative):
     assert score_text(positive).count_of(category) > 0, f"{category} missed its positive case"
+
+
+@pytest.mark.parametrize("category,positive,negative", CASES + STRUCTURAL_CASES, ids=lambda v: None)
+def test_detector_scores_above_zero_on_positive(category, positive, negative):
+    """Stronger than test_detector_fires_on_positive: a canonical positive
+    example that only counts a hit but never clears the category's own floor
+    (see CATEGORY_FLOORS) is a weak test case wearing a passing test - it
+    proves the regex matched something, not that the category would ever
+    show up in a report. A prior version of this suite had exactly that gap
+    for the two floor-of-2 categories, discovered during an adversarial
+    review pass that also found SKILL.md's own worked examples for those
+    categories had the identical problem."""
+    report = score_text(positive)
+    count = report.count_of(category)
+    assert report.score_of(category) > 0, (
+        f"{category} counted {count} hit(s) but still scored 0 - the positive case doesn't "
+        f"clear this category's floor, so it's too weak to demonstrate the category at all"
+    )
 
 
 @pytest.mark.parametrize("category,positive,negative", CASES + STRUCTURAL_CASES, ids=lambda v: None)

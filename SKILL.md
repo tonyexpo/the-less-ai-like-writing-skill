@@ -20,7 +20,7 @@ Use this skill when the user asks for writing that should feel:
 - less templated
 - more direct, concrete, or idiomatic
 
-Do not claim that the resulting text will defeat AI detectors. Detection systems are unreliable and no stylistic process can guarantee a classification outcome. This is not a hedge: structural detection is not defeated by sentence-level rewriting. A 2026 study of AI-generated fiction (StoryScope, arXiv:2604.03136) found that narrative structure alone — with no surface-style features at all — separates human from AI writing at 93.2% macro-F1. Changing how a piece is built is writing better. It is not a way to hide what wrote it.
+Do not claim that the resulting text will defeat AI detectors. Detection systems are unreliable and no stylistic process can guarantee a classification outcome. This is not a hedge: a 2026 study of AI-generated fiction (StoryScope, arXiv:2604.03136) found that its 304 narrative features — covering plot structure, tone, figurative language, and eight other dimensions, with no access to raw text at all — separate human from AI writing at 93.2% macro-F1. Reducing generic phrasing changes some of what those features measure; it does not change all of it, and it is not a way to hide what wrote a piece.
 
 ---
 
@@ -276,6 +276,8 @@ scanning for a keyword.
 AI-like:
 > If the first release was a sketch, this one is the underpainting. Each
 > layer since has pressed down on the one before it, the way sediment does.
+> The whole product eroded, then cracked, then gave way to something
+> sturdier underneath.
 
 Prefer:
 > The first release was rough. Since then we have shipped four incremental
@@ -289,10 +291,11 @@ organizing device, usually means a plain statement was avoided rather than
 earned. Cut back to the plain statement and keep the figure only if it is
 still doing real work once the extension is gone.
 
-Evidence: figurative density rated as heavy in 65-66% of AI-written passages
+Evidence: figurative density rated as heavy in 65% of AI-written passages
 versus 18% of human ones; an image extended across multiple sentences in 83%
-of AI passages versus 40% of human ones (StoryScope, TVD 0.48, its single
-strongest style feature).
+of AI passages versus 40% of human ones (StoryScope, TVD 0.48 - the single
+strongest style-dimension feature in the study, though not the strongest of
+all 304).
 
 ---
 
@@ -314,15 +317,15 @@ and the reader cannot check them. If the specific isn't known, say so plainly
 ("I don't know which one") rather than reaching for a vague placeholder.
 
 Evidence: reference to a specific, nameable brand or cultural touchstone
-appeared in 40% of human-written passages versus 13% of AI-written ones —
-the largest human-leaning gap StoryScope measured in either direction.
+appeared in 40% of human-written passages versus 13% of AI-written ones
+(TVD 0.32) — one of the larger human-leaning gaps StoryScope measured.
 
 ---
 
 ### 15. Over-unified argument
 
 AI-like:
-> Each of these setbacks points back to the same underlying lesson: that
+> Each of these examples points back to the same underlying theme: that
 > patience and ambition were never really in tension. Taken together, the
 > picture is clear.
 
@@ -339,10 +342,10 @@ to fit a conclusion rather than reported as it was. Keep the loose end if it
 is real.
 
 Evidence: thematic unity rated maximal in 74% of AI-written stories versus
-41% of human ones; human stories left the ending ambiguous (35% vs 19%) or
-the verdict on the central figure morally mixed (58% vs 38%) notably more
-often than AI ones did (StoryScope; this cluster was the study's strongest
-overall finding).
+41% of human ones (TVD 0.33). Human-written stories left the ending
+ambiguous more often (35% human vs 19% AI) and gave the central figure a
+morally mixed verdict more often (58% human vs 38% AI) than AI-written ones
+did (StoryScope).
 
 ---
 
