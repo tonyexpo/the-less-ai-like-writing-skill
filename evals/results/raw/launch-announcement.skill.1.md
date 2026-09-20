@@ -1,27 +1,21 @@
-# Introducing Kestrel: Project Management for How Teams Actually Work
+# Introducing Kestrel
 
-Today we're launching Kestrel, a project management platform built to help teams move faster, communicate better, and stay aligned.
+Today we're launching Kestrel, a new project management platform.
 
-## Why Now
+Teams now work distributed, deadline-driven, and buried under tools. Kestrel is built for that: fewer steps between deciding something and doing it, and less time spent hunting for the right view or the right message thread.
 
-Teams today juggle shifting priorities, cross-functional stakeholders, and an always-on pace of work. Kestrel was built for that: simple, clear, and fast.
+## What we built around
 
-## What Makes Kestrel Different
+Three things guided the design:
 
-Kestrel doesn't ask teams to trade power for usability. Three things guided how we built it:
+- **Clarity over clutter.** Views surface what matters instead of everything at once.
+- **Flexibility over rigidity.** Boards, timelines, or lists — Kestrel adapts to how a team already works.
+- **Speed over friction.** Onboarding and daily use are built to stay out of your way.
 
-- **Clarity over clutter.** Every view surfaces what matters most, so teams spend less time searching and more time doing.
-- **Flexibility over rigidity.** Boards, timelines, lists — Kestrel adapts to how people already work instead of forcing a new process on them.
-- **Speed over friction.** From onboarding to daily use, the experience stays smooth and intuitive.
+We didn't try to add more features. We tried to make the right ones easy to reach.
 
-We didn't try to add more features. We tried to make the right ones effortless to use.
+## Scaling with a team
 
-## Designed to Grow With You
+Kestrel works for a small team getting organized and for a larger org running several initiatives at once, without forcing either into a structure built for the other.
 
-Kestrel scales from a small team getting organized to a larger organization coordinating complex initiatives, without forcing a rigid structure on either one.
-
-## Looking Ahead
-
-This launch is the start. We'll keep listening, keep refining, and keep building tools that make collaboration easier — so the tools meant to support great work stop getting in its way.
-
-We can't wait to see what teams build with it.
+We'll keep refining it as we learn how teams actually use it. We're glad to finally put it in front of you.

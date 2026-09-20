@@ -1,23 +1,23 @@
 # Why Lisbon, Why Now
 
-Lisbon rewards a long weekend more than most cities its size. There's the coastal setting, the layered history, and — as anyone who's spent an evening on a miradouro will tell you — the light. Tradition and modernity don't compete here; they work together.
+Lisbon rewards a long weekend. Whether you come for the coast, the history, or the light and the food, the city gives you more than a checklist of sights — it gives you a rhythm to fall into. Tradition and modernity aren't just tolerating each other here; they're working together.
 
 ## Arrival and First Impressions
 
-Most visitors notice the same three things on arrival: the light, the rhythm of the trams, and how warmly they're received. The city's famous hills aren't just geography — they force you to slow down and see the streets from a different angle. Where other cities rush you forward, Lisbon asks you to pause.
+The light is different here, and so is the pace. Trams climb slowly through streets that weren't built for cars, and the hills — Lisbon's famous obstacle — turn out to be an invitation rather than an inconvenience: they force you to slow down and see the city from a new angle instead of rushing through it.
 
 ## A City Built on Contrasts
 
-The Alfama's narrow, winding streets sit close to the sleek riverside developments nearby, and the two don't clash so much as talk to each other. It's a city that has kept its past without freezing in it. Centuries-old miradouros and contemporary galleries share the same respect for craft.
+The Alfama's narrow, winding streets sit close to the newer riverside developments, and the two don't compete so much as talk to each other. Walk from a centuries-old miradouro to a contemporary gallery and the thing that carries over is a respect for craft, no matter what form it takes.
 
 ## Food, Culture, and Connection
 
-The food follows the same logic: simple ingredients, careful preparation, and hospitality that doesn't feel rehearsed. A meal in Lisbon is as much about the company and the pace as it is about what's on the plate. Music, art, and the street life around you fill in the rest of the picture.
+The food follows the same logic: simple ingredients, careful preparation, and hospitality that doesn't feel performed. A meal here is a reason to slow down, not just a way to eat. And it's not only about the plate — music, art, and the ordinary business of the street all add their own layer to the experience.
 
 ## Making the Most of Limited Time
 
-A good weekend here balances three things: the landmarks, the neighborhoods, and time left unplanned to wander. Skip any of the three and something's missing; over-schedule and you lose the room to stumble onto something better.
+A weekend isn't much time, so it pays to be deliberate. The visits that work best mix landmarks, neighborhoods, and time with no plan at all. Skip the wandering and the visit feels thinner; over-schedule and you lose room for anything unexpected to happen.
 
-## Looking Ahead
+## Lisbon, Now
 
-A weekend in Lisbon covers a lot of ground — for the culture seeker, the food lover, and anyone just there to walk around. It's worth putting on the list for your next trip.
+A weekend here works for the culture seeker, the food lover, and the person who just wants to walk around without an itinerary. If it's on your list, it's worth moving up.

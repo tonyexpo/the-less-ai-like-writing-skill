@@ -41,6 +41,8 @@ sys.path.insert(0, str(REPO_ROOT))
 from tools.patterns import CATEGORIES  # noqa: E402
 from tools.slopscore import score_text  # noqa: E402
 
+SCORER_MAX = 2 * len(CATEGORIES)
+
 SKILL_PATH = REPO_ROOT / "SKILL.md"
 DRAFT_DIR = REPO_ROOT / "evals/drafts"
 DEFAULT_OUT = REPO_ROOT / "evals/results/latest.json"
@@ -223,7 +225,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             print(
                 f"  [{done}/{len(jobs)}] {stem:<20} {arm:<9} "
-                f"{error or f'{drafts[stem]} -> {report.total}/24'}",
+                f"{error or f'{drafts[stem]} -> {report.total}/{SCORER_MAX}'}",
                 file=sys.stderr,
             )
             if args.save_raw and text:

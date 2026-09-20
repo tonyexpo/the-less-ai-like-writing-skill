@@ -1,23 +1,21 @@
-# The Legacy of Rome: Lessons in Institutional Resilience
+# The Legacy of Rome: What Institutional Decline Actually Looks Like
 
-The Western Roman Empire's decline in the 5th century CE is a case study in what happens when complexity outpaces adaptability — and a useful lens for thinking about resilience in organizations today.
+The Western Roman Empire didn't fall in a single moment. Its decline in the 5th century CE unfolded over decades, through economic strain, political fragmentation, and pressure from beyond its borders — three forces that arrived together rather than in sequence.
 
-## Economic Headwinds
+## Economic Strain
 
-Rome's economy faced mounting pressures in its final centuries. Some historians point to strained trade networks and currency debasement as contributing factors — evidence that even established systems can be disrupted when their foundational assumptions shift.
+Rome's economy weakened in its final centuries. Historians point to strained trade networks and currency debasement as contributing factors. Systems that had held for generations came under pressure as the assumptions beneath them shifted.
 
 ## Political Fragmentation
 
-The empire also grappled with internal leadership challenges: frequent turnover at the top and competing centers of authority. This wasn't a single point of failure so much as a slow erosion of alignment — a reminder that unity of purpose, not just scale, is what sustains an enterprise across generations.
+Leadership turned over frequently in this period, and authority split across competing centers rather than resting in one place. This wasn't a single dramatic failure — it was a slower loss of alignment among the people meant to be running the same institution.
 
-## External Pressures
+## External Pressure
 
-At the same time, groups beyond Rome's traditional borders were reshaping the geopolitical landscape. Whether these movements are viewed as invasions, migrations, or something in between, they point to the same truth: no organization, however dominant, operates in a vacuum. Internal strength and external conditions shape each other.
+At the same time, groups beyond Rome's traditional borders were reshaping the region — through invasion, migration, or some mix of both, depending on which historian you ask. Rome's internal condition and what was happening around it were never really separate problems.
 
-## A Convergence of Factors
+## Three Forces, Not One Cause
 
-Step back, and what emerges isn't one villain but a convergence: economic strain, political drift, and external change arriving together. It's tempting to look for a single cause, but decline is rarely about one crisis. It's about the interplay between several.
+Economic strain, political drift, and outside pressure all landed in the same period. It's tempting to name a single cause for Rome's fall, but the more accurate account is that no one factor did it alone — the combination did.
 
-## Looking Ahead
-
-What can today's leaders take from this? Institutions endure not by avoiding pressure, but by building the capacity to absorb it. The fall of the Western Roman Empire is less a cautionary tale than an invitation to look at the systems we're building now and ask whether they're designed for resilience, not just growth.
+What made these pressures fatal wasn't their individual severity but their timing. An institution that could absorb any one of them on its own faced all three at once, with fewer resources and less internal agreement each year to meet them.

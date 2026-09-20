@@ -1,19 +1,19 @@
-Large language models are changing how we write, search, and build software, and the mechanism at their core is **attention**. The math behind it comes straight from linear algebra — vectors, projections, dot products — even though what it produces looks nothing like a textbook exercise.
+Large language models are reshaping how we write, search, and build software, which makes the mechanism at their core worth understanding on its own terms. That mechanism is **attention**, and the math behind it draws on linear algebra you likely already know.
 
 ## The Core Idea: Vectors in Conversation
 
-Attention represents every token in a sequence as three vectors: a **query**, a **key**, and a **value**. These are linear projections — matrix multiplications — of the token's embedding. Rather than treating a sentence as a rigid, ordered list, attention lets every word "ask a question" (its query) and every other word "offer an answer" (its key).
+Attention represents every token in a sequence as three vectors: a **query**, a **key**, and a **value**. In practice these are linear projections — matrix multiplications — of the token's embedding. Rather than treating a sentence as a rigid, ordered list, attention lets every word "ask a question" (its query) and every other word "offer an answer" (its key).
 
 ## Not All Tokens Are Created Equal
 
-Taking the dot product of a query with every key produces a similarity score between that token and every other token in the sequence. Scaling those scores and passing them through a softmax turns them into weights that sum to one. Because the weights are computed fresh for each input rather than fixed in advance, relevant context gets amplified, long-range relationships become as accessible as nearby ones, and the same mechanism works across languages, domains, and tasks without modification.
+Once queries and keys exist, their dot products give a similarity score between every pair of tokens. Scaling these scores and passing them through a softmax turns them into weights that sum to one. Attention isn't memorizing fixed rules; it's deciding, on the fly, what matters most for a given token. Relevant context gets amplified, irrelevant context fades, and long-range relationships become as accessible as nearby ones — all from the same mechanism.
 
-The output for each token is the weighted sum of the value vectors, using those softmax weights.
+The output is a weighted sum of value vectors, using those softmax weights: a blend of what the model has chosen to attend to.
 
 ## Many Heads, Many Perspectives
 
-Rather than running one query-key-value computation, transformers typically run several in parallel — multi-head attention. A single head might settle on one kind of pattern; running several at once lets the model pick up on more than one at a time.
+Transformers typically use **multi-head attention** — running several query-key-value operations in parallel rather than relying on one. A single head might capture one kind of pattern; several heads, run together, can capture more than one at once.
 
-## What Stays Constant
+## Where This Leaves Us
 
-Vectors, projections, dot products, weighted sums — that's the whole toolkit attention is built from, and it's the same toolkit underneath every architecture built on top of it since. Understanding it is a reasonable place to start if you want to understand what comes next.
+The vectors, projections, and weighted sums underneath attention are ordinary linear algebra. What they produce — a mechanism that decides what to weigh, per token, per context — is most of why current language models work as well as they do.

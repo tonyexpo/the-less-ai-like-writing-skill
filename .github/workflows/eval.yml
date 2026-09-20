@@ -79,11 +79,14 @@ jobs:
           d = json.load(open("evals/results/latest.json"))
           s, m = d["summary"], d["meta"]
           print(f"## Eval: {m['model']}, {m['repeats']} samples per arm\n")
-          print("| slice | no skill | with skill | delta |")
-          print("| --- | ---: | ---: | ---: |")
-          for k in ("overall", "slop_prone", "controls"):
-              b = s[k]
-              print(f"| {k} | {b['baseline']} | {b['skill']} | {b['delta']:+} |")
+          print(f"Original drafts scored **{s['draft_mean']}**.\n")
+          print("| arm | mean score | removed from draft |")
+          print("| --- | ---: | ---: |")
+          for arm in m["arms"]:
+              a = s["arms"][arm]
+              print(f"| {arm} | {a['mean']} | {a['removed_from_draft']} |")
+          print(f"\nskill vs generic advice: **{s['skill_vs_generic']:+}** "
+                f"(density-adjusted: {s['skill_vs_generic_density']:+} hits/100w)")
           print(f"\n{s['runs_ok']} generations scored, {s['runs_failed']} failed.")
           PY
 

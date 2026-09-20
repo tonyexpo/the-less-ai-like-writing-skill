@@ -1,25 +1,17 @@
-# Introducing Kestrel: Project Management Built for How Teams Actually Work
+# Introducing Kestrel
 
-Today we're introducing Kestrel, a project management platform built to help teams move faster, communicate better, and stay aligned, without the friction that gets in the way.
+Today we're launching Kestrel, a new project management platform built to help teams move faster and stay aligned without fighting their tools.
 
-## Why Now
+## Why We Built It
 
-Modern teams juggle more moving pieces than ever: shifting priorities, cross-functional stakeholders, an always-on pace of work. In that environment, simplicity, clarity, and speed aren't nice-to-haves—they're required. Kestrel was built with that in mind.
+Most project management tools ask teams to adapt to the software. Kestrel does the opposite: it adapts to how the team already works. That meant designing around three things — clarity, flexibility, and speed — not as features to check off, but as constraints on everything else we built.
 
-## What Makes Kestrel Different
+Clarity means each view surfaces what actually matters, so people spend less time hunting for the right task or update. Flexibility means the tool follows the team's preferred format — boards, timelines, lists — rather than forcing one on them. Speed applies from the first login onward: setup and daily use should both feel immediate, not like something to learn.
 
-Kestrel doesn't ask teams to trade power for usability. Three principles guided how we built it:
+None of this came from adding more features. It came from deciding which ones didn't need to exist, and making the ones that remained easy to reach.
 
-- **Clarity over clutter.** Every view surfaces what matters most, so teams spend less time searching and more time doing.
-- **Flexibility over rigidity.** Whether a team works in boards, timelines, or lists, Kestrel adapts to how people already work.
-- **Speed over friction.** From onboarding to daily use, we prioritized a smooth, intuitive experience.
+## Built to Scale
 
-The goal wasn't more features. It was making the right features effortless to use.
+Kestrel works the same way for a five-person team getting organized as it does for a larger organization coordinating several initiatives at once. What makes that possible isn't a rigid structure imposed from the top — it's the same flexibility that shapes the rest of the product.
 
-## Designed to Grow With You
-
-Kestrel scales with a team, whether that's a small group just getting organized or a larger organization coordinating complex initiatives. That adaptability is what keeps teams focused as their needs change.
-
-## Looking Ahead
-
-This launch is a starting point. We'll keep listening to teams, refining Kestrel, and building tools that make collaboration easier—so the tools meant to support great work stop slowing it down.
+We built Kestrel because we think the tools meant to support good work shouldn't be the thing slowing it down. We're glad to finally put it in front of teams.

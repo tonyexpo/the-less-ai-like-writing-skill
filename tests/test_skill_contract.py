@@ -87,8 +87,8 @@ def audit_categories() -> list[str]:
     return re.findall(r"^\d+\.\s+(.+?)\s*$", section.group(1), re.MULTILINE)
 
 
-def test_audit_lists_twelve_categories():
-    assert len(audit_categories()) == len(CATEGORIES) == 12
+def test_audit_lists_sixteen_categories():
+    assert len(audit_categories()) == len(CATEGORIES) == 16
 
 
 def test_audit_categories_match_scorer():
@@ -98,8 +98,27 @@ def test_audit_categories_match_scorer():
 
 
 def test_scoring_bands_documented_in_skill():
-    for band in ("0–5", "6–11", "12+"):  # noqa: RUF001 - en dashes quoted from SKILL.md
+    for band in ("0–7", "8–15", "16+"):  # noqa: RUF001 - en dashes quoted from SKILL.md
         assert band in SKILL_TEXT, f"band {band} missing from SKILL.md"
+
+
+def test_scoring_bands_match_scorer_thresholds():
+    """The prose thresholds in SKILL.md and the BANDS tuple in slopscore.py
+    must describe the same cutoffs, or the two will quietly drift apart."""
+    from tools.slopscore import BANDS
+
+    ceilings = [ceiling for ceiling, _ in BANDS]
+    assert ceilings[-1] == 2 * len(CATEGORIES), "top band ceiling should equal the max score"
+    low_ceiling, revise_ceiling, _ = ceilings
+    assert f"0–{low_ceiling}" in SKILL_TEXT  # noqa: RUF001
+    assert f"{low_ceiling + 1}–{revise_ceiling}" in SKILL_TEXT  # noqa: RUF001
+    assert f"{revise_ceiling + 1}+" in SKILL_TEXT
+
+
+def test_skill_cites_its_paper_sources():
+    """The skill's newest four categories are evidence-backed, not folk wisdom.
+    Keep the citation in the file itself, not only in the README."""
+    assert "2604.03136" in SKILL_TEXT, "StoryScope citation missing from SKILL.md"
 
 
 def test_skill_refuses_to_promise_detector_evasion():

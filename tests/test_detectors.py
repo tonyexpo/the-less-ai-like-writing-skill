@@ -68,6 +68,36 @@ CASES: list[tuple[str, str, str]] = [
         "Let me know if you would like more.",
         "The caveats are in the appendix, with the raw timings.",
     ),
+    # The four categories below come from StoryScope (arXiv:2604.03136). Each
+    # is a narrow lexical proxy for a whole-document judgment, so the negative
+    # case matters even more than usual - see the module docstring in
+    # tools/patterns.py for the floors and reasoning.
+    (
+        "metaphor_saturation",
+        "If the first version was a sketch, this one is the underpainting. "
+        "The old system is a kind of scaffolding we never fully removed.",
+        "The rollout felt like pulling teeth, but the queue backs up once "
+        "the worker pool saturates, which is a known limit of the design.",
+    ),
+    (
+        "missing_anchors",
+        "A popular streaming service ran into trouble last year after a "
+        "well-known book on management inspired its new engagement strategy.",
+        "Netflix ran into trouble last year after 'High Output Management' "
+        "inspired its new engagement strategy.",
+    ),
+    (
+        "over_unified_argument",
+        "Each of these threads points back to the same underlying question. "
+        "Taken together, the picture is clear, and those aren't contradictions, they're the point.",
+        "Two of the three changes helped. The third one I still can't explain.",
+    ),
+    (
+        "unrelieved_earnestness",
+        "This journey has been both challenging and rewarding. Every obstacle "
+        "became an opportunity to grow, and we carry a deep sense of gratitude.",
+        "The migration was straightforward and finished on time.",
+    ),
 ]
 
 STRUCTURAL_CASES: list[tuple[str, str, str]] = [
@@ -150,11 +180,11 @@ def test_total_is_the_sum_of_categories():
     fixture = Path(__file__).parent / "fixtures/slop/obama_overview.md"
     report = score_text(fixture.read_text(encoding="utf-8"))
     assert report.total == sum(c.score for c in report.categories)
-    assert 0 <= report.total <= 24
+    assert 0 <= report.total <= 2 * len(CATEGORIES)
 
 
 @pytest.mark.parametrize(
-    "total,band", [(0, "low"), (5, "low"), (6, "revise"), (11, "revise"), (12, "rewrite"), (24, "rewrite")]
+    "total,band", [(0, "low"), (7, "low"), (8, "revise"), (15, "revise"), (16, "rewrite"), (32, "rewrite")]
 )
 def test_bands_follow_the_skill_thresholds(total, band):
     from tools.slopscore import _band
@@ -217,3 +247,34 @@ def test_technical_repetition_is_not_penalised():
     repetition must not cost anything."""
     text = "The parser caches the config. The parser reads it once. The parser never re-reads it."
     assert score_text(text).count_of("synonym_cycling") == 0
+
+
+# StoryScope (arXiv:2604.03136) explicitly found these do NOT separate AI from
+# human writing - see tools/patterns.py's module docstring. The point of these
+# tests is to keep it that way: a future change that adds a raw em-dash-count
+# or sentence-length detector should fail loudly, not slip in quietly because
+# it "sounds right".
+
+
+def test_frequent_em_dashes_alone_are_not_penalised():
+    """The paper measured em-dash/parenthetical-aside frequency directly (its
+    own question wording covers 'parentheses, dashes, or commas') and found
+    TVD 0.03 - negligible, and if anything tilted toward human writing. Do not
+    add a frequency-based em-dash detector on the strength of that paper."""
+    text = (
+        "The service degraded at 14:02 — a config push, not a deploy — and "
+        "recovered by 14:11. The root cause — a missing timeout — was fixed "
+        "the same day, and the postmortem — three paragraphs, no blame — "
+        "went out that afternoon."
+    )
+    report = score_text(text)
+    assert report.total == 0, report.as_dict(with_hits=True)
+
+
+def test_short_fragments_alone_are_not_penalised():
+    """The paper found sentence fragments run the OPPOSITE direction from folk
+    wisdom: present and stylistically significant in 85% of AI passages versus
+    67% of human ones. A punchy fragment is not evidence of a human hand, and
+    the scorer must not reward choppiness as if it were."""
+    text = "Shipped Tuesday. Broke Wednesday. Fixed by lunch. Nobody was happy about it."
+    assert score_text(text).total == 0
