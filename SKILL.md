@@ -526,13 +526,37 @@ Replace abstractions with:
 Do not automatically create:
 Introduction → Benefits → Challenges → Future → Conclusion.
 
-### Step 5: Run the AI-like pattern audit below.
+### Step 5: Audit as a distinct step, ranked by how separate it can be
+
+Self-auditing only works reliably against a draft that already exists in
+full, not against text still being emitted — once part of the visible
+response, a sentence can be added to, not truly rewritten, within that
+same response. In order of reliability:
+
+1. **A genuinely separate turn or call** — a follow-up turn, a fresh
+   context, an independent reviewer. Draft first, stop, then apply the
+   Revision Workflow below to the finished result. Measured to cut the
+   score roughly in half on most models and topics tested.
+2. **A private reasoning phase before the visible answer**, when
+   available. Draft there, apply the Revision Workflow to that private
+   draft, output only the final result. Weaker than (1) when measured: it
+   closed only part of the gap on one model and none on another.
+3. **When neither is available** — most single-turn requests — still
+   treat auditing as a distinct step, not something done while composing.
+   Finish the entire draft first, as if submitting it, then read it back
+   in full and apply the Revision Workflow below before finalizing. This
+   is the floor, not the goal: use (1) or (2) whenever either is
+   available.
+
+See `evals/selfedit_timing/` for what was measured and the numbers behind
+this ranking.
 
 ---
 
 ## Revision Workflow
 
-When editing an existing draft:
+When editing an existing draft — including a draft produced in a separate
+pass or reasoning phase per Step 5 above:
 
 ### Pass A — Information density
 
@@ -573,6 +597,12 @@ Preserve domain-specific vocabulary, preferences, skepticism, humor, restraint, 
 ### Pass F — Final cut
 
 Delete sentences that merely summarize what the preceding sentence already made obvious.
+
+### Pass G — Score against the audit
+
+Score the result against the AI-Likeness Audit below. A score in the
+8–15 or 16+ band still needs another round of Pass B or C before this is
+finished.
 
 ---
 
@@ -684,6 +714,11 @@ When a full workflow is unnecessary, apply this internal instruction:
 ---
 
 ## Final Quality Test
+
+Apply this against a draft that is already finished and fully in view —
+per Generation Workflow Step 5, ideally from a separate turn/call or a
+private reasoning phase — not while still composing the sentences being
+checked.
 
 Before returning the text, ask:
 

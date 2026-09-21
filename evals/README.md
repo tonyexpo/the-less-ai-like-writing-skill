@@ -308,3 +308,31 @@ Take these seriously before quoting a number.
    warns if the raw `skill` text on disk was generated against a different
    `SKILL.md` than the one it's about to score, by comparing against the
    `meta.skill_sha256` recorded in the previous `latest.json`.
+8. **This eval never tests the Generation Workflow's self-audit step.**
+   Every `skill`-arm call here revises an already-frozen draft in a fresh
+   process - that is the Revision Workflow, not the Generation Workflow's
+   step 5 as it originally read ("run the AI-Likeness Audit" on a draft in
+   the *same* response that produced it). Those are architecturally
+   different: in the first, the flawed text is fully present in context
+   before the fix is generated; in the second, the model is asked to audit
+   text it is still in the middle of emitting. `evals/selfedit_timing/`
+   tested that specific gap and found the two were not interchangeable -
+   self-auditing inside the same completion barely moved the score in most
+   conditions tested (on Opus it made the text worse than not applying the
+   skill at all), while an independent second pass with the identical
+   skill cut it by roughly half on most models and topics tested (not
+   all - see the write-up for the exception). Step 5 was rewritten three
+   times as a result: a first attempt (telling the model to draft
+   privately and self-audit before answering) turned out to be an
+   insufficient half-fix on its own re-validation; a second attempt made
+   the separate-pass pattern the primary instruction but, per an
+   independent adversarial review, gave an instruction an assistant can't
+   actually follow when answering an ordinary single-turn request - which
+   is most of how this skill is used; a third attempt replaced it with an
+   explicit ranked fallback (separate call, then private reasoning, then
+   an in-completion pass as a labeled floor) so the common single-turn
+   case has something it can actually do. See
+   `evals/selfedit_timing/README.md` for the full write-up, all three
+   attempts' numbers, the adversarial review's full findings and how each
+   was resolved, and a Haiku-specific instruction-following confound that
+   had to be excluded from the comparison.
