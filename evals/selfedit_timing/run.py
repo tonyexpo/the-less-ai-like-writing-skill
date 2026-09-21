@@ -40,10 +40,12 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures as futures
+import hashlib
 import json
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -52,6 +54,7 @@ sys.path.insert(0, str(REPO_ROOT))
 from tools.slopscore import score_text  # noqa: E402
 
 SKILL_PATH = REPO_ROOT / "SKILL.md"
+CONDITIONS = ("midtask", "twopass")
 
 # Same slop-inducing register evals/make_drafts.py uses to calibrate the
 # repo's frozen drafts (min score 10/32). Without it, both conditions sit at
@@ -79,8 +82,7 @@ TOPICS = {
         "engineering team rebuilt its product from the ground up."
     ),
     "oped-remote-work": (
-        "Write a 400-word opinion piece arguing that remote work is better for "
-        "most software teams."
+        "Write a 400-word opinion piece arguing that remote work is better for most software teams."
     ),
 }
 
@@ -94,8 +96,7 @@ REVISE_INSTRUCTION = (
 
 def midtask_prompt(topic_sloppy: str) -> str:
     return (
-        topic_sloppy
-        + " Apply the Generation Workflow described in the system prompt, including "
+        topic_sloppy + " Apply the Generation Workflow described in the system prompt, including "
         "its self-audit step (running the AI-Likeness Audit against your own draft "
         "before finalizing), entirely within this response. Return only the final "
         "text, with no commentary."
@@ -122,9 +123,14 @@ def run_midtask(topic_id: str, model: str, rep: int, skill: str, timeout: int) -
     text, secs, err = call(midtask_prompt(topic_sloppy), skill, model, timeout)
     report = score_text(text) if text else None
     return {
-        "topic": topic_id, "model": model, "condition": "midtask", "rep": rep,
-        "seconds": round(secs, 1), "error": err,
-        "words": report.words if report else 0, "total": report.total if report else None,
+        "topic": topic_id,
+        "model": model,
+        "condition": "midtask",
+        "rep": rep,
+        "seconds": round(secs, 1),
+        "error": err,
+        "words": report.words if report else 0,
+        "total": report.total if report else None,
         "text": text,
     }
 
@@ -133,27 +139,49 @@ def run_twopass(topic_id: str, model: str, rep: int, skill: str, timeout: int) -
     topic_sloppy = TOPICS[topic_id] + " " + SLOP_REGISTER
     raw, secs_a, err_a = call(topic_sloppy, None, model, timeout)
     if err_a:
-        return {"topic": topic_id, "model": model, "condition": "twopass", "rep": rep,
-                "seconds": secs_a, "error": err_a, "words": 0, "total": None, "text": ""}
+        return {
+            "topic": topic_id,
+            "model": model,
+            "condition": "twopass",
+            "rep": rep,
+            "seconds": secs_a,
+            "error": err_a,
+            "words": 0,
+            "total": None,
+            "text": "",
+            "raw_draft_text": "",
+        }
     raw_report = score_text(raw)
     # The failure mode found with Haiku: a "raw draft" that is actually a
     # meta-description of the piece rather than the piece itself, which
     # invalidates the comparison for that call. Flag it instead of silently
-    # trusting the score - see README.md's Haiku section.
+    # trusting the score - see README.md's Haiku section. raw_draft_text is
+    # kept so this can be checked directly instead of inferred from the
+    # revision's word count, which is a different call's output.
     suspicious = raw_report.words < 150
     revised, secs_b, err_b = call(REVISE_INSTRUCTION + raw, skill, model, timeout)
     report = score_text(revised) if revised else None
     return {
-        "topic": topic_id, "model": model, "condition": "twopass", "rep": rep,
-        "seconds": round(secs_a + secs_b, 1), "error": err_b,
-        "words": report.words if report else 0, "total": report.total if report else None,
-        "raw_draft_total": raw_report.total, "raw_draft_words": raw_report.words,
-        "raw_draft_suspicious": suspicious, "text": revised,
+        "topic": topic_id,
+        "model": model,
+        "condition": "twopass",
+        "rep": rep,
+        "seconds": round(secs_a + secs_b, 1),
+        "error": err_b,
+        "words": report.words if report else 0,
+        "total": report.total if report else None,
+        "raw_draft_total": raw_report.total,
+        "raw_draft_words": raw_report.words,
+        "raw_draft_suspicious": suspicious,
+        "raw_draft_text": raw,
+        "text": revised,
     }
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--topics", default=",".join(TOPICS), help="comma-separated topic ids")
     parser.add_argument("--models", default="sonnet", help="comma-separated claude -p --model values")
     parser.add_argument("--conditions", default="midtask,twopass")
@@ -169,8 +197,17 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(f"unknown topics: {', '.join(sorted(unknown))}")
     models = [m.strip() for m in args.models.split(",") if m.strip()]
     conditions = [c.strip() for c in args.conditions.split(",") if c.strip()]
+    unknown_conditions = set(conditions) - set(CONDITIONS)
+    if unknown_conditions:
+        # A typo here (e.g. "twpass") used to run the wrong function silently
+        # and mislabel the result with the misspelled condition's own name,
+        # which get() calls of the form r["condition"] == "twopass" would
+        # then just never match - quietly halving a cell's n instead of
+        # erroring. Catch it at parse time instead.
+        parser.error(f"unknown conditions: {', '.join(sorted(unknown_conditions))}")
 
     skill = SKILL_PATH.read_text(encoding="utf-8")
+    skill_sha256 = hashlib.sha256(skill.encode()).hexdigest()[:16]
 
     jobs = [
         (cond, topic_id, model, rep)
@@ -196,17 +233,37 @@ def main(argv: list[str] | None = None) -> int:
 
     out = args.out or (Path(__file__).parent / "results" / "latest_run.json")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(records, indent=2), encoding="utf-8")
-    print(f"\nwrote {out}", file=sys.stderr)
+    payload = {
+        "meta": {
+            "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "skill_sha256": skill_sha256,
+            "topics": topics,
+            "models": models,
+            "conditions": conditions,
+            "repeats": args.repeats,
+        },
+        "runs": records,
+    }
+    out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(f"\nwrote {out} (skill_sha256={skill_sha256})", file=sys.stderr)
 
-    ok = [r for r in records if not r["error"]]
+    # total is None for a call that returned exitcode 0 with empty stdout
+    # (error is None too in that case) - exclude those from the mean, not
+    # just calls that set error, or sum() below crashes on a None.
+    ok = [r for r in records if not r["error"] and r["total"] is not None]
     print("\n=== summary (mean total /32) ===")
     for topic_id in topics:
         for model in models:
             cells = []
             for cond in conditions:
-                totals = [r["total"] for r in ok if r["topic"] == topic_id and r["model"] == model and r["condition"] == cond]
-                cells.append(f"{cond}={sum(totals)/len(totals):.2f}(n={len(totals)})" if totals else f"{cond}=NA")
+                totals = [
+                    r["total"]
+                    for r in ok
+                    if r["topic"] == topic_id and r["model"] == model and r["condition"] == cond
+                ]
+                cells.append(
+                    f"{cond}={sum(totals) / len(totals):.2f}(n={len(totals)})" if totals else f"{cond}=NA"
+                )
             print(f"{topic_id:<24} {model:<7} " + "  ".join(cells))
 
     failed = [r for r in records if r["error"]]

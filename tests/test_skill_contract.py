@@ -121,6 +121,30 @@ def test_skill_cites_its_paper_sources():
     assert "2604.03136" in SKILL_TEXT, "StoryScope citation missing from SKILL.md"
 
 
+def test_generation_workflow_does_not_audit_within_the_same_completion():
+    """Regression test for the self-edit-timing bug (evals/selfedit_timing/):
+    step 5 used to ask a model to self-audit inside the same response that
+    produced the draft, which evals/selfedit_timing/README.md found barely
+    reduces AI-like patterns. Pin the old phrasing's absence so a future
+    edit can't silently reintroduce it."""
+    assert "Run the AI-like pattern audit below" not in SKILL_TEXT
+
+
+def test_workflows_still_point_to_the_ai_likeness_audit():
+    """The Generation and Revision Workflow sections are the only places
+    that tell a model to actually run the AI-Likeness Audit - the section
+    tools/patterns.py mirrors and this file's own audit tests pin down. A
+    rewrite of either workflow that drops the last pointer to it would
+    leave the audit section orphaned (unreachable from any instruction)
+    without this test noticing via any other check in this file."""
+    gen_start = SKILL_TEXT.index("## Generation Workflow")
+    rev_start = SKILL_TEXT.index("## Revision Workflow")
+    audit_start = SKILL_TEXT.index("## AI-Likeness Audit")
+    workflows_text = SKILL_TEXT[gen_start:audit_start]
+    assert rev_start < audit_start
+    assert "AI-Likeness Audit" in workflows_text
+
+
 def test_skill_refuses_to_promise_detector_evasion():
     """The skill must not claim it defeats AI detectors. Guard the claim, not
     the wording, by requiring the disclaimer and rejecting the promise."""

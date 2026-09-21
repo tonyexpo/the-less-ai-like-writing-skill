@@ -320,11 +320,19 @@ Take these seriously before quoting a number.
    self-auditing inside the same completion barely moved the score in most
    conditions tested (on Opus it made the text worse than not applying the
    skill at all), while an independent second pass with the identical
-   skill roughly halved it. Step 5 was rewritten as a result - a first
-   attempt (telling the model to draft privately and self-audit before
-   answering) turned out to be an insufficient half-fix on its own
-   re-validation, so it was rewritten again to make the separate-pass
-   pattern the primary instruction. See `evals/selfedit_timing/README.md`
-   for the full write-up, both rewrite attempts' numbers, and a
-   Haiku-specific instruction-following confound that had to be excluded
-   from the comparison.
+   skill cut it by roughly half on most models and topics tested (not
+   all - see the write-up for the exception). Step 5 was rewritten three
+   times as a result: a first attempt (telling the model to draft
+   privately and self-audit before answering) turned out to be an
+   insufficient half-fix on its own re-validation; a second attempt made
+   the separate-pass pattern the primary instruction but, per an
+   independent adversarial review, gave an instruction an assistant can't
+   actually follow when answering an ordinary single-turn request - which
+   is most of how this skill is used; a third attempt replaced it with an
+   explicit ranked fallback (separate call, then private reasoning, then
+   an in-completion pass as a labeled floor) so the common single-turn
+   case has something it can actually do. See
+   `evals/selfedit_timing/README.md` for the full write-up, all three
+   attempts' numbers, the adversarial review's full findings and how each
+   was resolved, and a Haiku-specific instruction-following confound that
+   had to be excluded from the comparison.

@@ -526,35 +526,37 @@ Replace abstractions with:
 Do not automatically create:
 Introduction → Benefits → Challenges → Future → Conclusion.
 
-### Step 5: Treat the audit as a separate pass, not a check on text still being written
+### Step 5: Audit as a distinct step, ranked by how separate it can be
 
-A self-audit only works reliably against a draft that already exists in
-full, not against text still being emitted. Once a sentence is part of the
-visible response, it cannot truly be rewritten within that same response —
-only added to.
+Self-auditing only works reliably against a draft that already exists in
+full, not against text still being emitted — once part of the visible
+response, a sentence can be added to, not truly rewritten, within that
+same response. In order of reliability:
 
-**Finish the draft as a complete piece of writing first. Then apply the
-Revision Workflow below to it as its own, later step** — against a draft
-that is now finished and in front of you, not one still being composed.
-When it is possible to make this a genuinely separate turn or call (a new
-conversation turn, a fresh context, an independent reviewer), prefer that:
-it is the version of this that was actually measured to work.
+1. **A genuinely separate turn or call** — a follow-up turn, a fresh
+   context, an independent reviewer. Draft first, stop, then apply the
+   Revision Workflow below to the finished result. Measured to cut the
+   score roughly in half on most models and topics tested.
+2. **A private reasoning phase before the visible answer**, when
+   available. Draft there, apply the Revision Workflow to that private
+   draft, output only the final result. Weaker than (1) when measured: it
+   closed only part of the gap on one model and none on another.
+3. **When neither is available** — most single-turn requests — still
+   treat auditing as a distinct step, not something done while composing.
+   Finish the entire draft first, as if submitting it, then read it back
+   in full and apply the Revision Workflow below before finalizing. This
+   is the floor, not the goal: use (1) or (2) whenever either is
+   available.
 
-If reasoning is available before the visible answer is written, drafting
-there first and revising before any visible output begins is worth doing
-in addition — but do not rely on it alone. Measured directly, that
-private-draft approach only partly closed the gap on one model and did
-not move the score at all on another, while the same audit run as a
-genuinely separate pass over a finished draft cut the score roughly in
-half on every model and topic tested cleanly. See `evals/selfedit_timing/`
-for the test and the numbers, including this second round.
+See `evals/selfedit_timing/` for what was measured and the numbers behind
+this ranking.
 
 ---
 
 ## Revision Workflow
 
-When editing an existing draft — including a draft produced in a prior,
-separate pass per Step 5 above:
+When editing an existing draft — including a draft produced in a separate
+pass or reasoning phase per Step 5 above:
 
 ### Pass A — Information density
 
@@ -595,6 +597,12 @@ Preserve domain-specific vocabulary, preferences, skepticism, humor, restraint, 
 ### Pass F — Final cut
 
 Delete sentences that merely summarize what the preceding sentence already made obvious.
+
+### Pass G — Score against the audit
+
+Score the result against the AI-Likeness Audit below. A score in the
+8–15 or 16+ band still needs another round of Pass B or C before this is
+finished.
 
 ---
 
@@ -708,8 +716,9 @@ When a full workflow is unnecessary, apply this internal instruction:
 ## Final Quality Test
 
 Apply this against a draft that is already finished and fully in view —
-privately reasoned or from a separate pass, per Generation Workflow Step 5
-— not while still composing the sentences being checked.
+per Generation Workflow Step 5, ideally from a separate turn/call or a
+private reasoning phase — not while still composing the sentences being
+checked.
 
 Before returning the text, ask:
 
