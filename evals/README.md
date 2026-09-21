@@ -308,3 +308,19 @@ Take these seriously before quoting a number.
    warns if the raw `skill` text on disk was generated against a different
    `SKILL.md` than the one it's about to score, by comparing against the
    `meta.skill_sha256` recorded in the previous `latest.json`.
+8. **This eval never tests the Generation Workflow's self-audit step.**
+   Every `skill`-arm call here revises an already-frozen draft in a fresh
+   process - that is the Revision Workflow, not the Generation Workflow's
+   step 5 ("run the AI-Likeness Audit" on a draft in the *same* response
+   that produced it). Those are architecturally different: in the first,
+   the flawed text is fully present in context before the fix is
+   generated; in the second, the model is asked to audit text it is still
+   in the middle of emitting. `evals/selfedit_timing/` tests that specific
+   gap and found the two are not interchangeable - self-auditing inside
+   the same completion barely moved the score in most conditions tested
+   (on Opus it made the text worse than not applying the skill at all),
+   while an independent second pass with the identical skill roughly
+   halved it. See `evals/selfedit_timing/README.md` for the full
+   write-up, including a Haiku-specific instruction-following confound
+   that had to be excluded from the comparison. Investigation only - no
+   change has been made to `SKILL.md`'s Generation Workflow as a result.
