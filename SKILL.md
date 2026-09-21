@@ -526,13 +526,38 @@ Replace abstractions with:
 Do not automatically create:
 Introduction → Benefits → Challenges → Future → Conclusion.
 
-### Step 5: Run the AI-like pattern audit below.
+### Step 5: Draft, then audit — never while still composing the visible answer
+
+A self-audit only works against text that is already fully there, not
+against text still being emitted. Once a sentence is part of the visible
+response, it cannot truly be rewritten within that same response — only
+added to.
+
+Two ways to audit reliably:
+
+- **Private draft first.** If reasoning is available before the visible
+  answer is written, draft there: compose the piece, run the AI-Likeness
+  Audit below against that private draft, revise it, and output only the
+  final result. Do not publish a rough pass and then try to fix it inside
+  the same visible response.
+- **Separate pass.** Otherwise, finish the draft as a complete piece of
+  writing first, then apply the Revision Workflow below to it as its own
+  step — against a draft that is now finished and in front of you, not one
+  still being composed.
+
+This is not a stylistic preference: measured directly, auditing inside the
+same completion that produced the draft left the AI-like pattern score
+essentially unchanged from not applying this skill at all (on one model it
+scored worse than the unedited baseline); the identical audit applied as a
+separate pass over the finished draft roughly halved it. See
+`evals/selfedit_timing/` for the test and the numbers.
 
 ---
 
 ## Revision Workflow
 
-When editing an existing draft:
+When editing an existing draft — including a draft produced in a prior,
+separate pass per Step 5 above:
 
 ### Pass A — Information density
 
@@ -684,6 +709,10 @@ When a full workflow is unnecessary, apply this internal instruction:
 ---
 
 ## Final Quality Test
+
+Apply this against a draft that is already finished and fully in view —
+privately reasoned or from a separate pass, per Generation Workflow Step 5
+— not while still composing the sentences being checked.
 
 Before returning the text, ask:
 
