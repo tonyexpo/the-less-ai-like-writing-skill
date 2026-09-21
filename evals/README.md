@@ -311,16 +311,20 @@ Take these seriously before quoting a number.
 8. **This eval never tests the Generation Workflow's self-audit step.**
    Every `skill`-arm call here revises an already-frozen draft in a fresh
    process - that is the Revision Workflow, not the Generation Workflow's
-   step 5 ("run the AI-Likeness Audit" on a draft in the *same* response
-   that produced it). Those are architecturally different: in the first,
-   the flawed text is fully present in context before the fix is
-   generated; in the second, the model is asked to audit text it is still
-   in the middle of emitting. `evals/selfedit_timing/` tests that specific
-   gap and found the two are not interchangeable - self-auditing inside
-   the same completion barely moved the score in most conditions tested
-   (on Opus it made the text worse than not applying the skill at all),
-   while an independent second pass with the identical skill roughly
-   halved it. See `evals/selfedit_timing/README.md` for the full
-   write-up, including a Haiku-specific instruction-following confound
-   that had to be excluded from the comparison. Investigation only - no
-   change has been made to `SKILL.md`'s Generation Workflow as a result.
+   step 5 as it originally read ("run the AI-Likeness Audit" on a draft in
+   the *same* response that produced it). Those are architecturally
+   different: in the first, the flawed text is fully present in context
+   before the fix is generated; in the second, the model is asked to audit
+   text it is still in the middle of emitting. `evals/selfedit_timing/`
+   tested that specific gap and found the two were not interchangeable -
+   self-auditing inside the same completion barely moved the score in most
+   conditions tested (on Opus it made the text worse than not applying the
+   skill at all), while an independent second pass with the identical
+   skill roughly halved it. Step 5 was rewritten as a result - a first
+   attempt (telling the model to draft privately and self-audit before
+   answering) turned out to be an insufficient half-fix on its own
+   re-validation, so it was rewritten again to make the separate-pass
+   pattern the primary instruction. See `evals/selfedit_timing/README.md`
+   for the full write-up, both rewrite attempts' numbers, and a
+   Haiku-specific instruction-following confound that had to be excluded
+   from the comparison.

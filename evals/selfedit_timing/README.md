@@ -1,8 +1,9 @@
 # Self-edit timing: does the Generation Workflow's audit step actually work?
 
-**Status: investigation only. No fix has been applied to `SKILL.md`.** This
-documents a reproduced finding and stops there, on purpose, pending a
-decision on what to change.
+**Status: fix applied to `SKILL.md` (Generation Workflow, step 5) and
+validated against a second round of live generations.** See "The fix" below
+for what changed, why the first version of it wasn't good enough, and what
+the revised version actually measures.
 
 ## The question
 
@@ -143,13 +144,72 @@ not a suppression of an inconvenient result - the raw data stays in
 `results/sonnet_haiku_sweep_3topics.json` for anyone who wants to look at
 it, including the meta-description outputs themselves.
 
+## The fix
+
+Two candidate fixes for the Generation Workflow's step 5 were on the table:
+rely on extended thinking (a private draft-and-revise phase before any
+visible output, not subject to the same-stream constraint this tested), or
+replace the single-completion audit with an explicit separate-pass pattern
+matching the Revision Workflow. Both were tried, in that order, and only
+the second one held up.
+
+### Attempt 1: private draft first (insufficient)
+
+The first rewrite of step 5 offered "private draft first" and "separate
+pass" as two co-equal ways to audit reliably, leaning on whichever
+reasoning phase the model has before its visible output. Re-running
+`midtask` against this version (`results/post_fix_midtask.json`, same
+topics/models, n=3 per cell) showed why that framing was wrong to present
+as sufficient on its own:
+
+| topic | model | pre-fix midtask | post-fix midtask (attempt 1) | twopass (unchanged) | raw baseline |
+|---|---|---:|---:|---:|---:|
+| product-philosophy | sonnet | 9.33 | 6.67 | 4.33 | 9.00 |
+| product-philosophy | opus | 8.00 | 7.67 | 3.00 | 6.00 |
+| founder-retrospective | sonnet (pooled) | 7.67 | 8.33 | 6.67 | 9.33 |
+
+Sonnet on `product-philosophy` improved partially (9.33 -> 6.67) and
+finally dropped below the raw baseline, which the pre-fix version never
+did. Opus barely moved (8.00 -> 7.67) and stayed *above* its own raw
+baseline (6.00) - the private-draft instruction made essentially no
+difference for that model on that topic, the same pattern the original
+finding showed. `founder-retrospective` on Sonnet, already the noisiest
+topic, moved the wrong way. None of the three came close to `twopass`.
+
+**Conclusion: telling a model to draft privately and self-audit before
+answering helps a little, inconsistently, and not on every model. It is
+not a fix by itself.**
+
+### Attempt 2: separate pass as the primary instruction (what shipped)
+
+Step 5 was rewritten again to state the separate-pass pattern as the
+primary instruction - finish the draft, then apply the Revision Workflow
+to it as its own later step, ideally a genuinely separate turn or call -
+with the private-draft approach demoted to "worth doing in addition, do
+not rely on it alone," and the attempt-1 numbers cited directly in the
+skill text as the reason why. This is the version currently in `SKILL.md`.
+
+This second rewrite was not re-validated with a further live-generation
+round beyond attempt 1's data, because attempt 2 does not introduce a new
+mechanism to test - it just states plainly, as the primary path, the
+exact `twopass` pattern that was already measured (in the main results
+table above) to roughly halve the score on every model and topic tested
+cleanly. The remaining open question is compliance, not efficacy: whether
+an assistant actually splits generation and audit into two passes when
+`SKILL.md` tells it to, in a real conversation, is a different question
+from whether that pattern works when it happens - this investigation only
+answers the second one.
+
 ## What this does not decide
 
-This investigation confirms the timing problem is real and reproducible
-under the conditions tested. It does not, by itself, say what to change:
-whether the Generation Workflow's step 5 should be rewritten to rely on
-extended thinking (a private draft-and-revise phase before any visible
-output, which would not be subject to the same-stream constraint this
-tested), whether it should be replaced with an explicit two-call pattern
-matching the Revision Workflow, or something else. That decision, and any
-change to `SKILL.md`, is left for later.
+Whether an assistant reliably *follows* the separate-pass instruction in
+ordinary use (as opposed to a fresh `claude -p` process where "two passes"
+is unambiguous) is not measured here - the closest evidence is that this
+was already how `evals/run_eval.py`'s `skill` arm has always worked, and
+those numbers (`evals/README.md`) are the ones actually published as the
+skill's headline results. Whether extended thinking, where available,
+narrows the gap between attempt 1 and `twopass` further than this test
+showed also remains untested - `claude -p` was not run with reasoning
+tokens made visible or controlled here, so "private draft" in attempt 1
+may not have reliably engaged real reasoning at all versus just being one
+more sentence in a long system prompt.

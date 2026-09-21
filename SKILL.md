@@ -526,31 +526,28 @@ Replace abstractions with:
 Do not automatically create:
 Introduction → Benefits → Challenges → Future → Conclusion.
 
-### Step 5: Draft, then audit — never while still composing the visible answer
+### Step 5: Treat the audit as a separate pass, not a check on text still being written
 
-A self-audit only works against text that is already fully there, not
-against text still being emitted. Once a sentence is part of the visible
-response, it cannot truly be rewritten within that same response — only
-added to.
+A self-audit only works reliably against a draft that already exists in
+full, not against text still being emitted. Once a sentence is part of the
+visible response, it cannot truly be rewritten within that same response —
+only added to.
 
-Two ways to audit reliably:
+**Finish the draft as a complete piece of writing first. Then apply the
+Revision Workflow below to it as its own, later step** — against a draft
+that is now finished and in front of you, not one still being composed.
+When it is possible to make this a genuinely separate turn or call (a new
+conversation turn, a fresh context, an independent reviewer), prefer that:
+it is the version of this that was actually measured to work.
 
-- **Private draft first.** If reasoning is available before the visible
-  answer is written, draft there: compose the piece, run the AI-Likeness
-  Audit below against that private draft, revise it, and output only the
-  final result. Do not publish a rough pass and then try to fix it inside
-  the same visible response.
-- **Separate pass.** Otherwise, finish the draft as a complete piece of
-  writing first, then apply the Revision Workflow below to it as its own
-  step — against a draft that is now finished and in front of you, not one
-  still being composed.
-
-This is not a stylistic preference: measured directly, auditing inside the
-same completion that produced the draft left the AI-like pattern score
-essentially unchanged from not applying this skill at all (on one model it
-scored worse than the unedited baseline); the identical audit applied as a
-separate pass over the finished draft roughly halved it. See
-`evals/selfedit_timing/` for the test and the numbers.
+If reasoning is available before the visible answer is written, drafting
+there first and revising before any visible output begins is worth doing
+in addition — but do not rely on it alone. Measured directly, that
+private-draft approach only partly closed the gap on one model and did
+not move the score at all on another, while the same audit run as a
+genuinely separate pass over a finished draft cut the score roughly in
+half on every model and topic tested cleanly. See `evals/selfedit_timing/`
+for the test and the numbers, including this second round.
 
 ---
 
