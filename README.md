@@ -6,16 +6,23 @@
 [![Last commit](https://img.shields.io/github/last-commit/tonyexpo/the-less-ai-like-writing-skill)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/commits/main)
 [![GitHub stars](https://img.shields.io/github/stars/tonyexpo/the-less-ai-like-writing-skill?style=flat)](https://github.com/tonyexpo/the-less-ai-like-writing-skill/stargazers)
 
-A reusable writing and editing skill that reduces common generic LLM prose patterns while preserving clarity, factual accuracy, and the author's natural voice.
+A reusable writing and editing skill for prose that reads like generic LLM output: too polished, vague, repetitive, promotional, or predictable in its structure. It cuts those patterns while keeping the text clear and factually accurate, and it leaves the author's natural voice alone.
 
-It is designed for text that feels too polished, vague, repetitive, promotional, or structurally predictable. The goal is better writing—not manufactured imperfections or tricks intended to defeat AI detectors.
+The aim is better writing. The skill does not manufacture imperfections, and it is not a trick for defeating AI detectors.
 
 ## Sources
 
 The skill's pattern catalog is not folk wisdom. It draws on two sources, in this order:
 
-1. **[Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)** — a community-maintained Wikipedia essay cataloguing recurring tells in AI-generated prose (em dashes used as formulaic emphasis, the compulsive rule of three, "not only X but also Y" symmetry, boosterish language, and more). The original twelve categories in the audit below cover much of the same ground and predate this citation being added to the repo; read this as the closest public reference for that catalog, not as a claim about which one the other was built from.
-2. **[StoryScope (Russell et al., arXiv:2604.03136)](https://arxiv.org/abs/2604.03136)** — a 2026 study that induces 304 narrative features across ten dimensions (plot, style, agents, and seven others - style, covering tone and figurative language among other things, is the single highest-separating dimension on average) from ~61,600 parallel human- and LLM-written stories and finds those features alone — no raw text access — separate human from AI writing at 93.2% macro-F1. Four of the paper's findings that plausibly transfer from fiction to ordinary prose became categories 13–16: metaphor saturation, missing real-world anchors, over-unified arguments, and unrelieved earnestness. Two findings from the same paper's released data explicitly did **not** become detectors — raw em-dash *frequency* barely separates AI from human text (this is a different claim than source 1's "used in a formulaic way" - a construction can be a recognizable tell without occurring more often overall, which is why this project's own em-dash detector, in category 2, targets one specific construction rather than counting dashes) — and neither does sentence length (sentence fragments actually run the opposite direction from folk wisdom). `tools/patterns.py` documents why, so the omission does not get quietly reintroduced later. See [`evals/README.md`](evals/README.md) for how this project verified the paper's numbers and where its own regex proxies for these four categories still fall short.
+1. [Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), a community-maintained Wikipedia essay that catalogues recurring tells in AI-generated prose: em dashes used as formulaic emphasis, the compulsive rule of three, "not only X but also Y" symmetry, boosterish language, and more. The audit's original twelve categories cover much of the same ground and were written before this citation was added to the repo. Treat the essay as the closest public reference for that catalog, not as a claim about which of the two was built from the other.
+
+2. [StoryScope (Russell et al., arXiv:2604.03136)](https://arxiv.org/abs/2604.03136), a 2026 study of ~61,600 parallel human- and LLM-written stories. It induces 304 narrative features across ten dimensions (plot, style, agents, and seven others) and finds that those features alone, with no access to the raw text, separate human from AI writing at 93.2% macro-F1. Style, which covers tone and figurative language among other things, is the single highest-separating dimension on average.
+
+   Four of the paper's findings plausibly transfer from fiction to ordinary prose, and they became categories 13–16: metaphor saturation, missing real-world anchors, over-unified arguments, and unrelieved earnestness.
+
+   Two findings from the paper's released data explicitly did **not** become detectors. Raw em-dash *frequency* barely separates AI from human text, and neither does sentence length; sentence fragments actually run the opposite direction from folk wisdom. The em-dash finding is a different claim from source 1's "used in a formulaic way": a construction can be a recognizable tell without occurring more often overall. That is why this project's own em-dash detector, in category 2, targets one specific construction instead of counting dashes. `tools/patterns.py` records why both were left out, so the omission does not get quietly reintroduced later.
+
+   See [`evals/README.md`](evals/README.md) for how this project verified the paper's numbers and where its own regex proxies for these four categories still fall short.
 
 ## What it improves
 
@@ -76,14 +83,14 @@ Example requests:
 
 ## Does it work?
 
-Measured, not asserted. Ten AI-slop drafts are revised three times each under
-three conditions that differ only in the system prompt, and the revisions are
-scored by [`tools/slopscore.py`](tools/slopscore.py) against the sixteen-category
-audit in `SKILL.md` (0-32, lower is better).
+Ten AI-slop drafts are revised three times each under three conditions that
+differ only in the system prompt. [`tools/slopscore.py`](tools/slopscore.py)
+then scores every revision against the sixteen-category audit in `SKILL.md`
+(0-32, lower is better).
 
-The middle arm is the one that makes this worth reading. Comparing the skill
+The generic-advice arm is the comparison that matters. Testing the skill
 against an empty prompt would only show that a long instruction beats none, so
-a third arm gets a short paragraph of ordinary copy-editing advice instead.
+the third arm gets a short paragraph of ordinary copy-editing advice instead.
 
 | condition | slopscore | hits per 100 words |
 | --- | ---: | ---: |
@@ -93,9 +100,9 @@ a third arm gets a short paragraph of ordinary copy-editing advice instead.
 | **revised with this skill** | **5.10** | **3.99** |
 
 Generic advice removes almost nothing (11.60 to 9.10, 2.50 points). The skill
-removes about two and a half times as much (6.50 points), and the gap between
-the two — 4.00 points of score, 2.06 hits per 100 words — is the part
-attributable to the skill rather than to prompting in general.
+removes about two and a half times as much (6.50 points). The gap between the
+two, 4.00 points of score and 2.06 hits per 100 words, is what the skill adds
+beyond prompting in general.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/slopscore-by-draft-dark.svg">
@@ -107,35 +114,35 @@ attributable to the skill rather than to prompting in general.
   <img alt="Mean score per audit category for each revision arm" src="assets/slopscore-by-category-light.svg">
 </picture>
 
-### Read the numbers with these caveats
+### Caveats
 
 - **Part of the gain is length.** The skill's revisions are shorter (249 words
   against 332 unguided), and shorter text trips fewer patterns outright. Cutting
-  padding is one of the skill's stated goals, so this is not cheating, but it
-  does mean the honest margin over generic advice is 4.00 points of score and
-  2.06 hits per 100 words - the smaller number is the length-adjusted one.
+  padding is one of the skill's stated goals, so this is not cheating. It does
+  mean the honest margin over generic advice is 4.00 points of score and 2.06
+  hits per 100 words, and the second, smaller number is the length-adjusted one.
 - **Structure survives every arm.** "Excessive headings or bullets" barely moves
   (2.00 to 1.63): asked to revise, the model rewrites sentences and leaves the
   scaffolding alone more than it should. If a draft is over-structured, the
   skill will not fix that by itself.
-- **Two detectors are essentially inert on this corpus, two more barely
-  fired.** "Forced synonym variation" (one of the original twelve) and
-  two of the four StoryScope-derived categories (13-16, see Sources above -
-  "Metaphor saturation" and "Missing real-world anchors") scored 0 in every
-  column across all 90 revisions. The other two ("Over-unified argument" and
-  "Unrelieved earnestness") scored at most 0.10 - real but negligible. Read
-  that as a narrow regex, not a genre mismatch: a review pass wrote
-  adversarial paraphrases of categories 13-16's own worked examples in
-  `SKILL.md` and most triggered nothing, alongside a few genuinely fine
-  sentences that falsely did. The `SKILL.md` guidance for all four is
-  sound; their automated detectors are not yet validated the way the
-  original twelve are. [`evals/README.md`](evals/README.md) has the full
-  breakdown, including a like-for-like comparison showing the measured
-  *score* improvement comes from strengthened guidance on *existing*
-  categories, not from these four (which is the most this eval can claim -
-  it cannot separate a category's own score from any knock-on effect its
-  guidance has on other categories), plus a demonstrated case of exactly
-  how noisy a small subset of this eval can get between runs.
+- **Three detectors are inert on this corpus, and two more barely fired.**
+  "Forced synonym variation" (one of the original twelve) scored 0 in every
+  column across all 90 revisions, and so did two of the four StoryScope-derived
+  categories (13-16, see Sources above): "Metaphor saturation" and "Missing
+  real-world anchors". The other two, "Over-unified argument" and "Unrelieved
+  earnestness", scored at most 0.10, which is real but negligible. Read that
+  as a sign of narrow regexes, not a genre mismatch. A review pass wrote
+  adversarial paraphrases of the worked examples for categories 13-16 in
+  `SKILL.md`; most of them triggered nothing, while a few genuinely fine
+  sentences triggered falsely. The `SKILL.md` guidance for all four is sound,
+  but their automated detectors are not yet validated the way the original
+  twelve are. [`evals/README.md`](evals/README.md) has the full breakdown. It
+  includes a like-for-like comparison showing that the measured *score*
+  improvement comes from strengthened guidance on *existing* categories, not
+  from these four. That is the most this eval can claim, because it cannot
+  separate a category's own score from any knock-on effect its guidance has on
+  other categories. It also shows, with a real run, how noisy a small subset of
+  this eval can get between runs.
 - **The harness is not a clean model.** Everything runs through the Claude Code
   CLI, which adds a system prompt of its own to all three arms. They are
   compared under identical conditions, but none of them is a raw model.
@@ -157,14 +164,14 @@ python -m tools.slopscore --max-score 7 *.md  # exit 1 above the threshold
 ```
 
 It scores each of the sixteen categories 0 (absent), 1 (occasional) or 2
-(frequent), using the bands the skill already defines: 0-7 low, 8-15 revise,
-16+ substantial rewrite.
+(frequent), and reads the total against the bands the skill already defines:
+0-7 low, 8-15 revise, 16+ substantial rewrite.
 
 It is a writing heuristic, not an AI detector, and it does not read minds: it
 counts surface patterns. A text can score 0 and still be boring, wrong, or
-plagiarised. What it will not do is reward the tactics `SKILL.md` forbids -
-there are tests asserting that em dashes, contractions, correct spelling and
-honest repetition all cost nothing.
+plagiarised. What it will not do is reward the tactics `SKILL.md` forbids:
+tests assert that em dashes, contractions, correct spelling and honest
+repetition all cost nothing.
 
 ## Development
 
@@ -188,11 +195,15 @@ goes red instead of quietly under-reporting.
 
 The skill does not deliberately insert spelling mistakes, awkward grammar, random slang, fake anecdotes, or fabricated sources. It does not ban individual words or punctuation marks mechanically.
 
-It also does not guarantee that a text will pass an AI detector. Detector results are unreliable, and no stylistic process can guarantee a particular classification. This skill focuses on writing quality rather than detector evasion.
+Nor does it guarantee that a text will pass an AI detector. Detector results are unreliable, and no stylistic process can guarantee a particular classification.
 
 ## Guiding principle
 
-The target is not imperfect writing. The target is writing that is specific, proportionate, purposeful, and recognizably authored.
+`SKILL.md` ends on the standard it holds every revision to:
+
+> The target is not imperfect writing.
+>
+> The target is writing that is specific, proportionate, purposeful, and recognizably authored.
 
 ## License
 
